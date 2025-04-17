@@ -1,0 +1,24 @@
+{
+  "name": "raices-ancestrales",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raicesancestrales/raicesancestrales.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raicesancestrales/raicesancestrales/issues"
+  },
+  "homepage": "https://github.com/raicesancestrales/raicesancestrales#readme",
+  "description": "",
+  "dependencies": {
+    "form-data": "^4.0.2",
+    "formidable": "^3.5.2"
+  }
+}
