@@ -10,18 +10,24 @@ export default async function handler(req, res) {
   }
 
   try {
-    const fetchResponse = await fetch('https://script.google.com/macros/s/AKfycbwU6yGIc66D2-SZyf1x5nz7Jtpv9L_Nl2k_fMn-5kAyIdTVlF2UYWQMMuZQIlPOEXCV/exec', {
+    const chunks = [];
+    for await (const chunk of req) {
+      chunks.push(chunk);
+    }
+    const body = Buffer.concat(chunks);
+
+    const response = await fetch('https://script.google.com/macros/s/AKfycbyeC53wi7b-GoBgAFNDLCqTnBWdcJa4YFvk1kGto5wQ8VRwFfW1932EUHEBMzLalkA/exec', {
       method: 'POST',
-      body: req,
       headers: {
         'Content-Type': req.headers['content-type'],
       },
+      body,
     });
 
-    const text = await fetchResponse.text();
-    return res.status(200).send(text);
+    const text = await response.text();
+    res.status(200).send(text);
   } catch (err) {
-    console.error('Error al reenviar al Apps Script:', err);
-    return res.status(500).send('Error en el proxy');
+    console.error('Error en el proxy:', err);
+    res.status(500).send('Error en el proxy');
   }
 }

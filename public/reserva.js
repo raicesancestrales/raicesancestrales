@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const telefono = document.getElementById("telefono").value;
     formData.append("telefono", `${codigo} ${telefono}`);
 
-    fetch("https://script.google.com/macros/s/AKfycbyeC53wi7b-GoBgAFNDLCqTnBWdcJa4YFvk1kGto5wQ8VRwFfW1932EUHEBMzLalkA/exec", {
+    fetch("/api/reserva", {
       method: "POST",
       body: formData
     })
