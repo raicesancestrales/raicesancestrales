@@ -5,29 +5,23 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  if (req.method === "POST") {
-    try {
-      const chunks = [];
-      for await (const chunk of req) {
-        chunks.push(chunk);
-      }
-      const buffer = Buffer.concat(chunks);
+  if (req.method !== 'POST') {
+    return res.status(405).send('Método no permitido');
+  }
 
-      const response = await fetch("https://script.google.com/macros/s/AKfycbwU6yGIc66D2-SZyf1x5nz7Jtpv9L_Nl2k_fMn-5kAyIdTVlF2UYWQMMuZQIlPOEXCV/exec", {
-        method: "POST",
-        headers: {
-          "Content-Type": req.headers["content-type"],
-        },
-        body: buffer,
-      });
+  try {
+    const fetchResponse = await fetch('https://script.google.com/macros/s/AKfycbwU6yGIc66D2-SZyf1x5nz7Jtpv9L_Nl2k_fMn-5kAyIdTVlF2UYWQMMuZQIlPOEXCV/exec', {
+      method: 'POST',
+      body: req,
+      headers: {
+        'Content-Type': req.headers['content-type'],
+      },
+    });
 
-      const text = await response.text();
-      res.status(200).send(text);
-    } catch (error) {
-      console.error("Error en proxy:", error);
-      res.status(500).json({ error: "Error al enviar al script" });
-    }
-  } else {
-    res.status(405).json({ error: "Método no permitido" });
+    const text = await fetchResponse.text();
+    return res.status(200).send(text);
+  } catch (err) {
+    console.error('Error al reenviar al Apps Script:', err);
+    return res.status(500).send('Error en el proxy');
   }
 }
