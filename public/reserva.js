@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const telefono = document.getElementById("telefono").value;
     formData.append("telefono", `${codigo} ${telefono}`);
 
-    fetch("https://script.google.com/macros/s/AKfycbxZeUM6VbGLjfIMOjwb6bd8wt4p_1tcT3UqNwnOiJ5zIFulbH2QU0Ba6J7Mytb2nVht/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbxhXI5SjdLpF1iFGdk--qWKlzC9fRCFeo3AJBWEiJdQzVfhkmICqY_E1QP1_eCO3q7N/exec", {
       method: "POST",
       body: formData
     })
