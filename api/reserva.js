@@ -13,7 +13,7 @@ export default async function handler(req, res) {
       }
       const buffer = Buffer.concat(chunks);
 
-      const response = await fetch("https://script.google.com/macros/s/AKfycbxhXI5SjdLpF1iFGdk--qWKlzC9fRCFeo3AJBWEiJdQzVfhkmICqY_E1QP1_eCO3q7N/exec", {
+      const response = await fetch("https://script.google.com/macros/s/AKfycbwU6yGIc66D2-SZyf1x5nz7Jtpv9L_Nl2k_fMn-5kAyIdTVlF2UYWQMMuZQIlPOEXCV/exec", {
         method: "POST",
         headers: {
           "Content-Type": req.headers["content-type"],
