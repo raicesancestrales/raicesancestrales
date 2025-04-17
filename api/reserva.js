@@ -10,14 +10,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    const fetchResponse = await fetch('https://script.google.com/macros/s/AKfycbyeC53wi7b-GoBgAFNDLCqTnBWdcJa4YFvk1kGto5wQ8VRwFfW1932EUHEBMzLalkA/exec', {
-      method: 'POST',
-      body: req, // Transmitimos el body tal cual viene
-      duplex: "half", // 👈 esto es lo que faltaba
-      headers: {
-        'Content-Type': req.headers['content-type'],
-      },
-    });
+    const fetchResponse = await fetch(
+      'https://script.google.com/macros/s/AKfycbyeC53wi7b-GoBgAFNDLCqTnBWdcJa4YFvk1kGto5wQ8VRwFfW1932EUHEBMzLalkA/exec',
+      {
+        method: 'POST',
+        body: req,
+        duplex: "half", // 🟢 ¡esto es clave!
+        headers: {
+          'Content-Type': req.headers['content-type'],
+        },
+      }
+    );
 
     const text = await fetchResponse.text();
     return res.status(200).send(text);
