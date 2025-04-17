@@ -2,7 +2,8 @@
 
 import { IncomingForm } from 'formidable';
 import FormData from 'form-data';
-import fetch from 'node-fetch';
+
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 export const config = {
   api: {
