@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -133,3 +134,140 @@
   <script src="reserva.js"></script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservar Cita - Raíces Ancestrales</title>
+  <link rel="stylesheet" href="style-reserva.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Reservar tu Cita</h1>
+    <form id="form-reserva">
+      <label for="nombre">Nombres y Apellidos:</label>
+      <input type="text" id="nombre" name="nombre" required />
+
+      <label for="nacimiento">Fecha de Nacimiento:</label>
+      <input type="date" id="nacimiento" name="nacimiento" required />
+
+      <label for="telefono">Teléfono:</label>
+      <div style="display: flex; gap: 0.5rem">
+        <select id="codigo-pais" name="codigo-pais" required style="flex: 1">
+          <option value="">Código</option>
+          <option value="+51">🇵🇪 +51 (Perú)</option>
+          <option value="+34">🇪🇸 +34 (España)</option>
+        </select>
+        <input type="tel" id="telefono" name="telefono" required style="flex: 2" />
+      </div>
+
+      <label for="correo">Correo electrónico:</label>
+      <input type="email" id="correo" name="correo" required />
+
+      <label for="signo">Signo Zodiacal:</label>
+      <select id="signo" name="signo" required>
+        <option value="">Selecciona tu signo</option>
+        <option value="Aries">Aries</option>
+        <option value="Tauro">Tauro</option>
+        <option value="Géminis">Géminis</option>
+        <option value="Cáncer">Cáncer</option>
+        <option value="Leo">Leo</option>
+        <option value="Virgo">Virgo</option>
+        <option value="Libra">Libra</option>
+        <option value="Escorpio">Escorpio</option>
+        <option value="Sagitario">Sagitario</option>
+        <option value="Capricornio">Capricornio</option>
+        <option value="Acuario">Acuario</option>
+        <option value="Piscis">Piscis</option>
+      </select>
+
+      <label for="pais">Selecciona tu país:</label>
+      <select id="pais" name="pais" required>
+        <option value="">-- País --</option>
+        <option value="peru">Perú</option>
+        <option value="espana">España</option>
+      </select>
+
+      <div id="metodo-pago-peru" class="horario" style="display: none">
+        <label>Método de pago (Perú):</label>
+        <input type="radio" name="pago-peru" value="yape" /> Yape<br />
+        <input type="radio" name="pago-peru" value="plin" /> Plin<br />
+        <input type="radio" name="pago-peru" value="bcp" /> Transferencia BCP<br />
+      </div>
+
+      <div id="metodo-pago-espana" class="horario" style="display: none">
+        <label>Método de pago (España):</label>
+        <input type="radio" name="pago-espana" value="bizum" /> Bizum<br />
+        <input type="radio" name="pago-espana" value="transferencia" /> Transferencia<br />
+      </div>
+
+      <label for="comprobante">Sube el comprobante de pago:</label>
+      <input type="file" id="comprobante" name="comprobante" accept="image/*,application/pdf" required />
+
+      <label>
+        <input type="checkbox" id="terminos" required />
+        Acepto las <a href="politicas.html" target="_blank">políticas de privacidad</a> y <a href="terminos.html" target="_blank">términos y condiciones</a>
+      </label>
+      
+
+      <button type="submit" class="confirmar" disabled>Confirmar cita</button>
+    </form>
+  </main>
+
+  <!-- Modal resumen de datos -->
+  <div id="modal-confirmacion" class="modal oculto">
+    <div class="modal-content">
+      <span class="cerrar" id="cerrar-confirmacion">&times;</span>
+      <h2>Confirmar Reserva</h2>
+      <div id="resumen"></div>
+      
+      <button class="confirmar">Confirmar</button>
+      <button class="cancelar">Cancelar</button>
+    </div>
+  </div>
+
+<!-- Modal Pago Perú -->
+<div id="modal-peru" class="modal oculto">
+    <div class="modal-content">
+      <span class="cerrar" id="cerrar-peru">&times;</span>
+      <h3>Formas de Pago - Perú</h3>
+      <p>✔️ Yape: <strong>999999999</strong></p>
+      <p>✔️ Plin: <strong>999999999</strong></p>
+      <p>✔️ Transferencia BCP: <strong>999999999999999999</strong></p>
+      <p>A nombre de: <strong>Maritza Amelia Oblitas Morán</strong></p>
+  
+      <label><input type="radio" name="pago-peru" value="Yape" /> Seleccionar Yape</label><br />
+      <label><input type="radio" name="pago-peru" value="Plin" /> Seleccionar Plin</label><br />
+      <label><input type="radio" name="pago-peru" value="Transferencia BCP" /> Seleccionar Transferencia</label><br />
+  
+      <button id="confirmar-peru" class="confirmar">Confirmar método</button>
+    </div>
+  </div>
+  
+  <!-- Modal Pago España -->
+  <div id="modal-espana" class="modal oculto">
+    <div class="modal-content">
+      <span class="cerrar" id="cerrar-espana">&times;</span>
+      <h3>Formas de Pago - España</h3>
+      <p>✔️ Bizum: <strong>999999999999</strong></p>
+      <p>✔️ Transferencia Santander: <strong>ES99999999999999999999999999</strong></p>
+      <p>A nombre de: <strong>Maritza Amelia Oblitas Morán</strong></p>
+  
+      <label><input type="radio" name="pago-espana" value="Bizum" /> Seleccionar Bizum</label><br />
+      <label><input type="radio" name="pago-espana" value="Transferencia Santander" /> Seleccionar Transferencia</label><br />
+  
+      <button id="confirmar-espana" class="confirmar">Confirmar método</button>
+    </div>
+  </div>
+  
+
+
+
+
+
+  <script src="reserva.js"></script>
+</body>
+</html>
+>>>>>>> 4e99cc6114bcc53ec415b1964a6a0c712067d269
