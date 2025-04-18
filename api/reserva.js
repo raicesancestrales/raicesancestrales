@@ -44,7 +44,7 @@ export default async function handler(req, res) {
         return res.status(400).send('Archivo no válido o no recibido');
       }
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbyPtNgMtUthtmDVMgHuAZeQSKoRxBFYKr3YIhwMRNTgQ8saD9qLrNmvmCLEguBwOd2V/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbx2mzVNh3tqAge7hfQMw5DYH-5umHc-WbD9JE7GSc0B9AoVcHfeC2YBPUFh8ek7hCB2/exec', {
         method: 'POST',
         body: formData
       });
