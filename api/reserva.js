@@ -1,6 +1,8 @@
 import { IncomingForm } from 'formidable';
 import { createReadStream } from 'fs';
-import { Client } from 'pg';
+import pkg from 'pg';
+const { Client } = pkg;
+
 
 export const config = {
   api: {
