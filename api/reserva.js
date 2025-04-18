@@ -42,6 +42,7 @@ export default async function handler(req, res) {
       console.log("📥 Campos recibidos:", fields);
       console.log("📎 Archivo recibido:", files);
 
+      // Convertir todos los campos a string plano (último valor si viene como array)
       const {
         idReserva,
         nombre,
@@ -52,14 +53,9 @@ export default async function handler(req, res) {
         pais,
         fecha,
         hora,
-<<<<<<< HEAD
         metodoPago,
-     } = Object.fromEntries(
-=======
-        metodoPago
       } = Object.fromEntries(
->>>>>>> 30f032b (fix: actualizar reserva.js para Google Drive)
-        Object.entries(fields).map(([key, value]) => [key, Array.isArray(value) ? value.at(-1) : value])
+        Object.entries(fields).map(([key, val]) => [key, Array.isArray(val) ? val.at(-1) : val])
       );
 
       // Subida a Google Drive
