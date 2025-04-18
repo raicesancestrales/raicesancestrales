@@ -53,7 +53,9 @@ export default async function handler(req, res) {
         fecha,
         hora,
         metodoPago,
-      } = fields;
+     } = Object.fromEntries(
+        Object.entries(fields).map(([key, value]) => [key, Array.isArray(value) ? value.at(-1) : value])
+      );
 
       const archivo = files.comprobante;
       const urlArchivo = archivo ? archivo.originalFilename : null;
