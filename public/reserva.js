@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const telefono = document.getElementById("telefono").value;
     formData.append("telefono", `${codigo} ${telefono}`);
 
-    fetch("https://script.google.com/macros/s/AKfycbwQoWAqzjqsfNutFLv_M_yaRJPjen7sny2kFMppmWkxKRlZz40guAZo_OTyaMIACaD5/exec", {
+    fetch("/api/reserva", {
       method: "POST",
       body: formData
     })
