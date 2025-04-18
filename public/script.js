@@ -32,7 +32,11 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Redirecciones básicas
-  document.getElementById("btn-reservar").onclick = () => window.location.href = "reserva.html";
+  const btnReservar = document.getElementById("btn-reservar");
+if (btnReservar) {
+  btnReservar.onclick = () => window.location.href = "reserva.html";
+}
+
   document.getElementById("btn-modificar").onclick = () => window.location.href = "modificar.html";
 });
 
