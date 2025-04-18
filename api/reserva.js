@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbwU6yGIc66D2-SZyf1x5nz7Jtpv9L_Nl2k_fMn-5kAyIdTVlF2UYWQMMuZQIlPOEXCV/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxxGCu58jTD7Gg6UF6gMDNUG5MhX-JyNSTw7wyumQWKYABv6rwes6G2J2ZnMLwxvOXq/exec', {
         method: 'POST',
         body: formData,
         headers: formData.getHeaders(),
