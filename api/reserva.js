@@ -1,8 +1,8 @@
+import path from 'path';
+import { subirArchivo } from '../lib/googleDrive.js';
 import { IncomingForm } from 'formidable';
-import { createReadStream } from 'fs';
 import pkg from 'pg';
 const { Client } = pkg;
-
 
 export const config = {
   api: {
@@ -52,13 +52,34 @@ export default async function handler(req, res) {
         pais,
         fecha,
         hora,
+<<<<<<< HEAD
         metodoPago,
      } = Object.fromEntries(
+=======
+        metodoPago
+      } = Object.fromEntries(
+>>>>>>> 30f032b (fix: actualizar reserva.js para Google Drive)
         Object.entries(fields).map(([key, value]) => [key, Array.isArray(value) ? value.at(-1) : value])
       );
 
+      // Subida a Google Drive
       const archivo = files.comprobante;
-      const urlArchivo = archivo ? archivo.originalFilename : null;
+      let urlArchivo = null;
+
+      if (archivo && archivo.filepath && archivo.originalFilename && archivo.mimetype) {
+        const ext = path.extname(archivo.originalFilename);
+        const nombrePersonalizado = `Comprobante - ${nombre}${ext}`;
+        try {
+          urlArchivo = await subirArchivo(
+            archivo.filepath,
+            nombrePersonalizado,
+            archivo.mimetype,
+            process.env.GOOGLE_FOLDER_ID
+          );
+        } catch (uploadError) {
+          console.error('❌ Error al subir a Google Drive:', uploadError);
+        }
+      }
 
       const query = `
         INSERT INTO reservas (
