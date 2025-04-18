@@ -2,6 +2,7 @@
 
 import { IncomingForm } from 'formidable';
 import FormData from 'form-data';
+import fs from 'fs';
 
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
     return res.status(405).send('Método no permitido');
   }
 
-  const form = new IncomingForm();
+  const form = new IncomingForm({ multiples: true });
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
@@ -26,13 +27,16 @@ export default async function handler(req, res) {
 
     const formData = new FormData();
 
+    // Agregar campos normales
     for (const key in fields) {
       formData.append(key, fields[key][0]);
     }
 
+    // Agregar archivo como stream
     const file = files.comprobante?.[0];
     if (file) {
-      formData.append('comprobante', file, {
+      const fileStream = fs.createReadStream(file.filepath);
+      formData.append('comprobante', fileStream, {
         contentType: file.mimetype,
         filename: file.originalFilename,
       });
