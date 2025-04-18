@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       }
 
       // Enviar al Apps Script
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxWz0FeHluj-isLPE_FqqzYO-m1NdbRUaXXxlMmUnFiWV3_EA_x26kx4zpIK3vo56E2/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxRF2UoD46eGTS8Ie4PE9PEE8bGz6tbtPlM1NShDhqZY6iehWHCsbxY1w8iQharoK2l/exec', {
         method: 'POST',
         body: formData,
         headers: formData.getHeaders(),
