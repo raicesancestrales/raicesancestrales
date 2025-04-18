@@ -48,6 +48,12 @@ export default async function handler(req, res) {
         method: 'POST',
         body: formData
       });
+      // Verificar que la respuesta fue exitosa
+if (!response.ok) {
+  console.error('Error en la solicitud a Google Apps Script:', response.statusText);
+  return res.status(500).send('Error en el proxy');
+}
+
 
       // Loguear respuesta del Apps Script
       const text = await response.text();
