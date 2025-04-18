@@ -1,9 +1,13 @@
 {
   "name": "raices-ancestrales",
   "version": "1.0.0",
+  "description": "Formulario de reservas para Raíces Ancestrales",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vercel dev",
+    "build": "vercel build",
+    "start": "vercel start"
   },
   "repository": {
     "type": "git",
@@ -16,13 +20,9 @@
     "url": "https://github.com/raicesancestrales/raicesancestrales/issues"
   },
   "homepage": "https://github.com/raicesancestrales/raicesancestrales#readme",
-  "description": "",
   "dependencies": {
     "form-data": "^4.0.2",
-    "formdata": "^0.10.4",
-    "formdata-node": "^6.0.3",
     "formidable": "^3.5.2",
-    "node": "^23.11.0",
     "node-fetch": "^3.3.2"
   }
 }
