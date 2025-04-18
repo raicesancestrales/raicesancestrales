@@ -1,64 +1,89 @@
-const express = require('express');
-const { Client } = require('pg');
-const bodyParser = require('body-parser');
+import { IncomingForm } from 'formidable';
+import { createReadStream } from 'fs';
+import { Client } from 'pg';
 
-const app = express();
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
-// Usar middleware para manejar el cuerpo de la solicitud
-app.use(bodyParser.json()); // Para recibir datos en formato JSON
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-// Conectar a la base de datos de Heroku Postgres
-const client = new Client({
-  connectionString: process.env.DATABASE_URL, // Heroku gestiona esta variable
-  ssl: { rejectUnauthorized: false }, // Requerido por Heroku
-});
-
-client.connect()
-  .then(() => console.log('Conexión exitosa a la base de datos en Heroku'))
-  .catch(err => console.error('Error de conexión', err));
-
-// Endpoint POST para recibir y guardar los datos de la reserva
-app.post('/api/reserva', async (req, res) => {
-  const {
-    nombre,
-    nacimiento,
-    telefono,
-    correo,
-    signo,
-    pais,
-    fecha,
-    hora,
-    metodoPago,
-    urlArchivo
-  } = req.body;
-
-  try {
-    // Query SQL para insertar la reserva en la base de datos
-    const query = `
-      INSERT INTO reservas (
-        nombre, nacimiento, telefono, correo, signo, pais, fecha, hora, metodo_pago, url_archivo, created_at, estado
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), 'Pendiente')
-      RETURNING id
-    `;
-    const values = [nombre, nacimiento, telefono, correo, signo, pais, fecha, hora, metodoPago, urlArchivo];
-
-    // Ejecutar el query para insertar los datos
-    const result = await client.query(query, values);
-
-    // Obtener el ID generado de la reserva
-    const idReserva = result.rows[0].id;
-
-    // Responder con éxito
-    res.status(200).json({ message: 'Reserva guardada correctamente', idReserva });
-  } catch (error) {
-    console.error('Error al guardar los datos:', error);
-    res.status(500).json({ error: 'Error al guardar la reserva' });
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end(); // Preflight CORS
   }
-});
 
-// Iniciar el servidor (puerto dinámico para Heroku)
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Servidor en funcionamiento en puerto ${port}`);
-});
+  if (req.method !== 'POST') {
+    return res.status(405).send('Método no permitido');
+  }
+
+  const form = new IncomingForm({ multiples: false, keepExtensions: true });
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      console.error('❌ Error al parsear formulario:', err);
+      return res.status(500).send('Error al procesar el formulario');
+    }
+
+    try {
+      const client = new Client({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false },
+      });
+
+      await client.connect();
+
+      console.log("📥 Campos recibidos:", fields);
+      console.log("📎 Archivo recibido:", files);
+
+      const {
+        idReserva,
+        nombre,
+        nacimiento,
+        telefono,
+        correo,
+        signo,
+        pais,
+        fecha,
+        hora,
+        metodoPago,
+      } = fields;
+
+      const archivo = files.comprobante;
+      const urlArchivo = archivo ? archivo.originalFilename : null;
+
+      const query = `
+        INSERT INTO reservas (
+          nombre, nacimiento, telefono, correo, signo, pais,
+          fecha, hora, metodo_pago, url_archivo, estado
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'Pendiente')
+      `;
+
+      const values = [
+        nombre,
+        nacimiento,
+        telefono,
+        correo,
+        signo,
+        pais,
+        fecha,
+        hora,
+        metodoPago,
+        urlArchivo,
+      ];
+
+      await client.query(query, values);
+      await client.end();
+
+      return res.status(200).send('✅ Reserva guardada correctamente en PostgreSQL');
+    } catch (error) {
+      console.error("❌ Error al guardar en la base de datos:", error);
+      return res.status(500).send('Error interno al guardar la reserva');
+    }
+  });
+}
