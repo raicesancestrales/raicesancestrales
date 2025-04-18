@@ -1,5 +1,3 @@
-// /api/reserva.js
-
 import { IncomingForm } from 'formidable';
 import { createReadStream } from 'fs';
 import { FormData } from 'formdata-node';
@@ -11,6 +9,11 @@ export const config = {
 };
 
 export default async function handler(req, res) {
+  // Agregar encabezados CORS para permitir solicitudes
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
   if (req.method !== 'POST') {
     return res.status(405).send('Método no permitido');
   }
@@ -41,12 +44,14 @@ export default async function handler(req, res) {
         return res.status(400).send('Archivo no válido o no recibido');
       }
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbz7QjJX0N2o5j3QrytVxinDlaZQEoWVIsZ-405eV6fkwZDZwKv3-ER2cEvd18rnzghb/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbyc2C721HMaXYOrP-yAlqSZmRCEop2UVQSVFRtQyffpqnqSs5l9MjjxzGf7fTm4dhss/exec', {
         method: 'POST',
         body: formData
       });
 
+      // Loguear respuesta del Apps Script
       const text = await response.text();
+      console.log('Respuesta de Google Apps Script:', text);
       return res.status(200).send(text);
     } catch (error) {
       console.error('❌ Error al reenviar al Apps Script:', error);
