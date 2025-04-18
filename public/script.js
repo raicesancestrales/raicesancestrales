@@ -35,3 +35,10 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("btn-reservar").onclick = () => window.location.href = "reserva.html";
   document.getElementById("btn-modificar").onclick = () => window.location.href = "modificar.html";
 });
+
+
+
+
+
+
+

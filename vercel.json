@@ -1,10 +1,7 @@
-
 {
-    "cleanUrls": true,
-    "rewrites": [
-      { "source": "/", "destination": "/index.html" },
-      { "source": "/reserva", "destination": "/reserva.html" },
-      { "source": "/seleccion-cita", "destination": "/seleccion-cita.html" }
-    ]
-  }
-  
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/reserva", "destination": "/reserva.html" },
+    { "source": "/seleccion-cita", "destination": "/seleccion-cita.html" }
+  ]
+}
