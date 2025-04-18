@@ -21,6 +21,7 @@
   "homepage": "https://github.com/raicesancestrales/raicesancestrales#readme",
   "dependencies": {
     "form-data": "^4.0.2",
+    "formdata-node": "^6.0.3",
     "formidable": "^3.5.2",
     "node-fetch": "^3.3.2"
   }
