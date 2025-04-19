@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const tablaBody = document.getElementById("tabla-reservas-body");
   
     async function cargarReservas() {
-      const res = await fetch("/api/admin/reservas");
+      const res = await fetch("/api/admin/reserva");
       const reservas = await res.json();
   
       tablaBody.innerHTML = "";
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   
     window.cambiarEstado = async (id, nuevoEstado) => {
-      const res = await fetch("/api/admin/reservas", {
+      const res = await fetch("/api/admin/reserva", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, estado: nuevoEstado })
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const confirmar = confirm("¿Seguro que deseas eliminar esta reserva?");
       if (!confirmar) return;
   
-      const res = await fetch("/api/admin/reservas", {
+      const res = await fetch("/api/admin/reserva", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id })
