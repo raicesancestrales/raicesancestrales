@@ -47,7 +47,7 @@
         const res = await fetch("/api/admin/reserva");
         const data = await res.json();
         ocupadas = data
-          .filter(r => r.fecha === fechaSeleccionada && r.estado === "confirmada")
+          .filter(r => r.fecha === fechaSeleccionada && r.estadotrim().toLowerCase() === "confirmada")
           .map(r => r.hora);
       } catch (error) {
         console.error("Error al cargar reservas:", error);
