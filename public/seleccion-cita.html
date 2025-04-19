@@ -46,9 +46,19 @@
       try {
         const res = await fetch("/api/admin/reserva");
         const data = await res.json();
+        
+        
         ocupadas = data
-          .filter(r => r.fecha === fechaSeleccionada && r.estadotrim().toLowerCase() === "confirmada")
-          .map(r => r.hora);
+  .filter(r => {
+    const fechaFormateada = new Date(r.fecha).toISOString().split("T")[0]; // "2025-04-25"
+    return fechaFormateada === fechaSeleccionada && r.estado.trim().toLowerCase() === "confirmada";
+  })
+  .map(r => r.hora);
+
+        
+
+
+
       } catch (error) {
         console.error("Error al cargar reservas:", error);
       }
