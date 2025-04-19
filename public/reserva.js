@@ -113,28 +113,21 @@ document.addEventListener("DOMContentLoaded", function () {
       method: "POST",
       body: formData
     })
-    .then(res => res.text())
-    .then(data => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Reserva enviada',
-        text: '✅ Tu reserva fue enviada con éxito',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Cerrar'
-      });
+    .then(async res => {
+      const text = await res.text();
+      if (!res.ok) throw new Error(text);
     
+      Swal.fire("✅ Reserva enviada", text, "success");
       form.reset();
       modal.classList.add("oculto");
       btnConfirmar.disabled = true;
       metodoPagoSeleccionado = "";
     })
     .catch(err => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: '❌ Hubo un problema al enviar la reserva.',
-        confirmButtonColor: '#d33'
-      });
+      Swal.fire("⛔ Error", err.message, "error");
+      console.error("Error al enviar la reserva:", err);
+    });
+    
     
       console.error(err);
     });
