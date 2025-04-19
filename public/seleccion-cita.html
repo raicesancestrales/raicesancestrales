@@ -55,7 +55,8 @@
               r.estado.trim().toLowerCase() === "confirmada"
             );
           })
-          .map(r => r.hora);
+          .map(r => r.hora?.substring(0, 5));
+
       } catch (error) {
         console.error("❌ Error al cargar reservas confirmadas:", error);
       }
