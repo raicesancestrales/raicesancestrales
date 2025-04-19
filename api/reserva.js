@@ -111,6 +111,20 @@ export default async function handler(req, res) {
         });
     
         await client.connect();
+
+// Verificamos si ya existe una reserva confirmada para esa fecha y hora
+const checkQuery = `
+  SELECT COUNT(*) FROM reservas
+  WHERE fecha = $1 AND hora = $2 AND estado = 'confirmada'
+`;
+const checkResult = await client.query(checkQuery, [fecha, hora]);
+
+if (parseInt(checkResult.rows[0].count) > 0) {
+  await client.end();
+  return res.status(400).send("⛔ Ya hay una reserva confirmada en ese horario");
+}
+
+
     
         const query = `
           INSERT INTO reservas (
