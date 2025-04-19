@@ -1,3 +1,19 @@
+const requiredVars = [
+  'GOOGLE_SERVICE_ACCOUNT_EMAIL',
+  'GOOGLE_PRIVATE_KEY',
+  'GOOGLE_FOLDER_ID',
+  'DATABASE_URL'
+];
+
+const missing = requiredVars.filter(v => !process.env[v]);
+if (missing.length) {
+  console.error("❌ Variables de entorno faltantes:", missing);
+}
+
+
+
+
+
 import path from 'path';
 import { subirArchivo } from '../lib/googleDrive.js';
 import { IncomingForm } from 'formidable';
