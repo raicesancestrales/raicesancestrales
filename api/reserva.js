@@ -70,7 +70,8 @@ export default async function handler(req, res) {
         metodoPago,
       } = campos;
     
-      const archivo = files.comprobante;
+      const archivo = Array.isArray(files.comprobante) ? files.comprobante[0] : files.comprobante;
+
       let urlArchivo = null;
     
       console.log("📥 Campos recibidos:", campos);
