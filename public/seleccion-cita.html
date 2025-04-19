@@ -41,26 +41,23 @@
 
       mensaje.innerHTML = `<p><strong>Horarios disponibles para el ${fechaSeleccionada}</strong></p>`;
 
-      // ✅ Pedimos reservas confirmadas al backend
       let ocupadas = [];
+
       try {
-        const res = await fetch("/api/admin/reserva");
+        const res = await fetch("/api/admin/reserva"); // <-- usa esta si tu archivo es reserva.js
         const data = await res.json();
-        
-        
+
         ocupadas = data
-  .filter(r => {
-    const fechaFormateada = new Date(r.fecha).toISOString().split("T")[0]; // "2025-04-25"
-    return fechaFormateada === fechaSeleccionada && r.estado.trim().toLowerCase() === "confirmada";
-  })
-  .map(r => r.hora);
-
-        
-
-
-
+          .filter(r => {
+            const fechaBD = new Date(r.fecha).toISOString().split("T")[0];
+            return (
+              fechaBD === fechaSeleccionada &&
+              r.estado.trim().toLowerCase() === "confirmada"
+            );
+          })
+          .map(r => r.hora);
       } catch (error) {
-        console.error("Error al cargar reservas:", error);
+        console.error("❌ Error al cargar reservas confirmadas:", error);
       }
 
       horariosDisponibles.forEach(hora => {
