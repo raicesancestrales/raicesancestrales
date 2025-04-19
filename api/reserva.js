@@ -39,7 +39,8 @@ export default async function handler(req, res) {
     return res.status(405).send('Método no permitido');
   }
 
-  const form = new IncomingForm({ multiples: false, keepExtensions: true });
+  const form = new IncomingForm({ multiples: false, keepExtensions: true,
+    uploadDir: "/tmp" });
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
@@ -73,14 +74,28 @@ export default async function handler(req, res) {
       } = Object.fromEntries(
         Object.entries(fields).map(([key, val]) => [key, Array.isArray(val) ? val.at(-1) : val])
       );
+      console.log("🧪 archivo:", archivo);
+      console.log("🧪 filepath:", archivo?.filepath);
+      console.log("🧪 mimetype:", archivo?.mimetype);
+      
+
+
+
+
 
       // Subida a Google Drive
       const archivo = files.comprobante;
       let urlArchivo = null;
 
-      if (archivo && archivo.filepath && archivo.originalFilename && archivo.mimetype) {
+      if (archivo?.filepath && archivo?.originalFilename && archivo?.mimetype) {
         const ext = path.extname(archivo.originalFilename);
         const nombrePersonalizado = `Comprobante - ${nombre}${ext}`;
+      
+        console.log("📎 Archivo recibido:");
+        console.log("🧪 Path:", archivo.filepath);
+        console.log("🧪 Nombre original:", archivo.originalFilename);
+        console.log("🧪 MimeType:", archivo.mimetype);
+      
         try {
           urlArchivo = await subirArchivo(
             archivo.filepath,
@@ -88,10 +103,23 @@ export default async function handler(req, res) {
             archivo.mimetype,
             process.env.GOOGLE_FOLDER_ID
           );
+      
+          console.log("✅ Archivo subido a Drive:", urlArchivo);
         } catch (uploadError) {
-          console.error('❌ Error al subir a Google Drive:', uploadError);
+          console.error('❌ Error al subir a Google Drive:', uploadError.message);
+          console.error(uploadError); // log completo
         }
+      } else {
+        console.warn("⚠️ El archivo no se recibió correctamente:");
+        console.log("filepath:", archivo?.filepath);
+        console.log("originalFilename:", archivo?.originalFilename);
+        console.log("mimetype:", archivo?.mimetype);
       }
+      
+
+
+
+
 
       const query = `
         INSERT INTO reservas (
