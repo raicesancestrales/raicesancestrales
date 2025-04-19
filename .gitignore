@@ -1,4 +1,37 @@
-node_modules
+# ⚙️ Config y entorno
 .env
+.env.*
 .env.local
-.vercel
+.env.development
+.env.production
+clave.txt
+*.format
+
+# 🧪 Archivos de test o prueba
+*.test.js
+*.spec.js
+
+# ⚙️ Next.js (si lo usás)
+.next/
+out/
+
+# 🔧 Logs y temporales
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+node_modules/
+package-lock.json
+.pnpm-debug.log*
+
+# ⚙️ Mac & sistema
+.DS_Store
+Thumbs.db
+
+# 🔧 Vercel config local
+.vercel/
+
+# 🧪 IDE/Editor config
+.vscode/
+.idea/
+*.swp
