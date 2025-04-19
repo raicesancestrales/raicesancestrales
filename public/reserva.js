@@ -113,18 +113,34 @@ document.addEventListener("DOMContentLoaded", function () {
       method: "POST",
       body: formData
     })
-      .then(res => res.text())
-      .then(data => {
-        alert("¡Reserva enviada correctamente!");
-        form.reset();
-        modal.classList.add("oculto");
-        btnConfirmar.disabled = true;
-        metodoPagoSeleccionado = "";
-      })
-      .catch(err => {
-        alert("Error al enviar la reserva.");
-        console.error(err);
+    .then(res => res.text())
+    .then(data => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Reserva enviada',
+        text: '✅ Tu reserva fue enviada con éxito',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Cerrar'
       });
+    
+      form.reset();
+      modal.classList.add("oculto");
+      btnConfirmar.disabled = true;
+      metodoPagoSeleccionado = "";
+    })
+    .catch(err => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: '❌ Hubo un problema al enviar la reserva.',
+        confirmButtonColor: '#d33'
+      });
+    
+      console.error(err);
+    });
+    
+
+
   });
 
   function generarID() {
