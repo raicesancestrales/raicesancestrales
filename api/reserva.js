@@ -42,24 +42,21 @@ export default async function handler(req, res) {
   const form = new IncomingForm({ multiples: false, keepExtensions: true,
     uploadDir: "/tmp" });
 
-  form.parse(req, async (err, fields, files) => {
-    if (err) {
-      console.error('❌ Error al parsear formulario:', err);
-      return res.status(500).send('Error al procesar el formulario');
-    }
 
-    try {
-      const client = new Client({
-        connectionString: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false },
-      });
 
-      await client.connect();
 
-      console.log("📥 Campos recibidos:", fields);
-      console.log("📎 Archivo recibido:", files);
 
-      // Convertir todos los campos a string plano (último valor si viene como array)
+    form.parse(req, async (err, fields, files) => {
+      if (err) {
+        console.error('❌ Error al parsear formulario:', err);
+        return res.status(500).send('Error al procesar el formulario');
+      }
+    
+      // 🔍 Normalizamos los campos
+      const campos = Object.fromEntries(
+        Object.entries(fields).map(([key, val]) => [key, Array.isArray(val) ? val.at(-1) : val])
+      );
+    
       const {
         idReserva,
         nombre,
@@ -71,31 +68,23 @@ export default async function handler(req, res) {
         fecha,
         hora,
         metodoPago,
-      } = Object.fromEntries(
-        Object.entries(fields).map(([key, val]) => [key, Array.isArray(val) ? val.at(-1) : val])
-      );
-      console.log("🧪 archivo:", archivo);
-      console.log("🧪 filepath:", archivo?.filepath);
-      console.log("🧪 mimetype:", archivo?.mimetype);
-      
-
-
-
-
-
-      // Subida a Google Drive
+      } = campos;
+    
       const archivo = files.comprobante;
       let urlArchivo = null;
-
+    
+      console.log("📥 Campos recibidos:", campos);
+      console.log("📎 Archivo recibido:", archivo);
+    
+      // 📤 Subida a Google Drive si hay archivo válido
       if (archivo?.filepath && archivo?.originalFilename && archivo?.mimetype) {
         const ext = path.extname(archivo.originalFilename);
         const nombrePersonalizado = `Comprobante - ${nombre}${ext}`;
-      
-        console.log("📎 Archivo recibido:");
+    
         console.log("🧪 Path:", archivo.filepath);
         console.log("🧪 Nombre original:", archivo.originalFilename);
         console.log("🧪 MimeType:", archivo.mimetype);
-      
+    
         try {
           urlArchivo = await subirArchivo(
             archivo.filepath,
@@ -103,52 +92,53 @@ export default async function handler(req, res) {
             archivo.mimetype,
             process.env.GOOGLE_FOLDER_ID
           );
-      
+    
           console.log("✅ Archivo subido a Drive:", urlArchivo);
         } catch (uploadError) {
-          console.error('❌ Error al subir a Google Drive:', uploadError.message);
-          console.error(uploadError); // log completo
+          console.error("❌ Error al subir a Google Drive:", uploadError.message);
+          console.error(uploadError);
         }
       } else {
-        console.warn("⚠️ El archivo no se recibió correctamente:");
-        console.log("filepath:", archivo?.filepath);
-        console.log("originalFilename:", archivo?.originalFilename);
-        console.log("mimetype:", archivo?.mimetype);
+        console.warn("⚠️ Archivo no válido o no recibido:", archivo);
       }
-      
-
-
-
-
-
-      const query = `
-        INSERT INTO reservas (
-          nombre, nacimiento, telefono, correo, signo, pais,
-          fecha, hora, metodo_pago, url_archivo, estado
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'Pendiente')
-      `;
-
-      const values = [
-        nombre,
-        nacimiento,
-        telefono,
-        correo,
-        signo,
-        pais,
-        fecha,
-        hora,
-        metodoPago,
-        urlArchivo,
-      ];
-
-      await client.query(query, values);
-      await client.end();
-
-      return res.status(200).send('✅ Reserva guardada correctamente en PostgreSQL');
-    } catch (error) {
-      console.error("❌ Error al guardar en la base de datos:", error);
-      return res.status(500).send('Error interno al guardar la reserva');
-    }
-  });
-}
+    
+      // 🗃️ Guardamos la reserva en PostgreSQL
+      try {
+        const client = new Client({
+          connectionString: process.env.DATABASE_URL,
+          ssl: { rejectUnauthorized: false },
+        });
+    
+        await client.connect();
+    
+        const query = `
+          INSERT INTO reservas (
+            nombre, nacimiento, telefono, correo, signo, pais,
+            fecha, hora, metodo_pago, url_archivo, estado
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'Pendiente')
+        `;
+    
+        const values = [
+          nombre,
+          nacimiento,
+          telefono,
+          correo,
+          signo,
+          pais,
+          fecha,
+          hora,
+          metodoPago,
+          urlArchivo,
+        ];
+    
+        await client.query(query, values);
+        await client.end();
+    
+        return res.status(200).send('✅ Reserva guardada correctamente en PostgreSQL');
+      } catch (error) {
+        console.error("❌ Error al guardar en la base de datos:", error);
+        return res.status(500).send('Error interno al guardar la reserva');
+      }
+    });
+  }
