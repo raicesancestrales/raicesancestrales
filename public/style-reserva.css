@@ -133,3 +133,47 @@ body {
     }
   }
   
+  @media (max-width: 768px) {
+    body {
+      padding: 1rem;
+      flex-direction: column;
+    }
+  
+    .container {
+      width: 95%;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+  
+    h1 {
+      font-size: 1.5rem;
+    }
+  
+    label {
+      font-size: 0.95rem;
+    }
+  
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select,
+    textarea,
+    input[type="file"] {
+      font-size: 0.95rem;
+      padding: 0.6rem;
+    }
+  
+    .modal-content {
+      padding: 1.5rem;
+      max-width: 90%;
+    }
+  
+    button[type="submit"],
+    .confirmar,
+    .cancelar {
+      font-size: 1rem;
+      padding: 0.8rem;
+    }
+  }
+  

@@ -134,3 +134,38 @@ p {
     font-size: 0.95rem;
   }
 }
+
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+    flex-direction: column;
+  }
+
+  .container {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .botones {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .botones button {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+    max-width: 90%;
+  }
+
+  .confirmar {
+    font-size: 1rem;
+  }
+}
