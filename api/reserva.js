@@ -140,7 +140,7 @@ export default async function handler(req, res) {
 
       const query = `
         INSERT INTO reservas (
-          idReserva, nombre, nacimiento, telefono, correo, signo, pais,
+          id, nombre, nacimiento, telefono, correo, signo, pais,
           fecha, hora, metodo_pago, url_archivo, estado
         )
         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'Pendiente')
