@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modificar o Anular Cita</title>
+  <link rel="stylesheet" href="style-modificar.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <main class="container">
+    <h1>✏️ Modificar o Anular Cita</h1>
+    <input type="text" id="idBusqueda" placeholder="Ingresa tu ID de reserva">
+    <button id="buscar">Buscar</button>
+
+    <form id="form-modificar" class="oculto">
+      <input type="hidden" id="idReserva" name="idReserva">
+
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required>
+
+      <label for="nacimiento">Fecha de Nacimiento:</label>
+      <input type="date" id="nacimiento" name="nacimiento" required>
+
+      <label for="telefono">Teléfono:</label>
+      <input type="tel" id="telefono" name="telefono" required>
+
+      <label for="correo">Correo:</label>
+      <input type="email" id="correo" name="correo" required>
+
+      <label for="signo">Signo Zodiacal:</label>
+      <select id="signo" name="signo" required>
+        <option value="">-- Selecciona --</option>
+        <option value="Aries">Aries</option>
+        <option value="Tauro">Tauro</option>
+        <option value="Géminis">Géminis</option>
+        <option value="Cáncer">Cáncer</option>
+        <option value="Leo">Leo</option>
+        <option value="Virgo">Virgo</option>
+        <option value="Libra">Libra</option>
+        <option value="Escorpio">Escorpio</option>
+        <option value="Sagitario">Sagitario</option>
+        <option value="Capricornio">Capricornio</option>
+        <option value="Acuario">Acuario</option>
+        <option value="Piscis">Piscis</option>
+      </select>
+
+      <label for="fecha">Nueva Fecha:</label>
+      <input type="date" id="fecha" name="fecha" required>
+
+      <label for="hora">Nueva Hora:</label>
+      <input type="time" id="hora" name="hora" required>
+
+      <button type="submit" class="confirmar">Guardar Cambios</button>
+      <button type="button" id="anular" class="cancelar">Anular Cita</button>
+    </form>
+  </main>
+
+  <!-- Modal de mensaje -->
+  <div id="modal-info" class="modal oculto">
+    <div class="modal-content">
+      <span class="cerrar" onclick="document.getElementById('modal-info').classList.add('oculto')">&times;</span>
+      <h3>⛔ Atención</h3>
+      <p>Esta cita ya fue <strong>confirmada</strong> y no puede modificarse desde aquí.</p>
+      <p>Para anular o reprogramar, por favor comunícate vía <a href="https://wa.me/51999999999" target="_blank">WhatsApp</a>.</p>
+    </div>
+  </div>
+
+  <script src="style-modificar.js"></script>
+</body>
+</html>
