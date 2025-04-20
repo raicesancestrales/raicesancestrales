@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   await client.connect();
 
   if (req.method === "GET") {
-    const result = await client.query("SELECT * FROM reservas ORDER BY fecha, hora");
+    const result = await client.query("SELECT * FROM reservas ORDER BY fecha DESC, hora DESC");
     await client.end();
     return res.status(200).json(result.rows);
   }

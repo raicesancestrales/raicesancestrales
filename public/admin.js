@@ -1,3 +1,7 @@
+
+
+let reservasGlobal = [];
+
 document.addEventListener("DOMContentLoaded", async () => {
     const clave = prompt("🔐 Ingrese clave de acceso:");
     if (clave !== "tarot2025") {
@@ -16,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const tr = document.createElement("tr");
   
         tr.innerHTML = `
-          <td>${r.id}</td>
+          <td><a href="#" onclick="verDetalle('${r.id}', event)">${r.id}</a></td>
           <td>${r.nombre}</td>
           <td>${r.fecha}</td>
           <td>${r.hora}</td>
@@ -32,6 +36,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   
         tablaBody.appendChild(tr);
       });
+
+      reservasGlobal = reservas;
+
     }
   
     window.cambiarEstado = async (id, nuevoEstado) => {
@@ -62,5 +69,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   
     cargarReservas();
+  });
+  
+  window.verDetalle = (id, e) => {
+    e.preventDefault();
+    const reserva = reservasGlobal.find(r => r.id === id);
+    if (!reserva) return;
+  
+    const modal = document.getElementById("modal-detalle");
+    const contenido = document.getElementById("contenido-detalle");
+  
+    contenido.innerHTML = `
+      <p><strong>Nombre:</strong> ${reserva.nombre}</p>
+      <p><strong>Correo:</strong> ${reserva.correo}</p>
+      <p><strong>Teléfono:</strong> ${reserva.telefono}</p>
+      <p><strong>Signo:</strong> ${reserva.signo}</p>
+      <p><strong>País:</strong> ${reserva.pais}</p>
+      <p><strong>Fecha:</strong> ${reserva.fecha}</p>
+      <p><strong>Hora:</strong> ${reserva.hora}</p>
+      <p><strong>Método de pago:</strong> ${reserva.metodo_pago}</p>
+      <p><strong>Estado:</strong> ${reserva.estado}</p>
+      ${reserva.url_archivo ? `<p><strong>Comprobante:</strong> <a href="${reserva.url_archivo}" target="_blank">📎 Ver archivo</a></p>` : ""}
+    `;
+  
+    modal.classList.remove("oculto");
+  };
+  
+  document.getElementById("cerrar-detalle").addEventListener("click", () => {
+    document.getElementById("modal-detalle").classList.add("oculto");
   });
   
