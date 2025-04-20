@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consultar Cita</title>
+  <link rel="stylesheet" href="public/consultar.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <main class="container">
+    <h1>🔍 Consultar mi cita</h1>
+    <p>Ingresa el ID de tu reserva para ver los detalles.</p>
+
+    <input type="text" id="idReserva" placeholder="Ej: RA-M9A123-ABC456" />
+    <button onclick="consultarReserva()">Consultar</button>
+
+    <div id="resultado" class="oculto"></div>
+  </main>
+
+  <script src="consultar.js"></script>
+</body>
+</html>
