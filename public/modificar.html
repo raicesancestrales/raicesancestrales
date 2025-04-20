@@ -84,7 +84,7 @@
   
           console.log("🔎 Respuesta de API:", data);
   
-          if (!data || !data.idreserva || !data.estado || data.idreserva.toUpperCase() !== id.toUpperCase()) {
+          if (!data || !data.id || !data.estado || data.idreserva.toUpperCase() !== id.toUpperCase()) {
             return Swal.fire("❌", "Reserva no encontrada o inválida", "error");
           }
   
@@ -94,7 +94,7 @@
   
           // ✅ Mostrar formulario con datos cargados
           form.classList.remove("oculto");
-          document.getElementById("idReserva").value = data.idreserva;
+          document.getElementById("idReserva").value = data.id;
           document.getElementById("nombre").value = data.nombre;
           document.getElementById("nacimiento").value = data.nacimiento;
           document.getElementById("telefono").value = data.telefono;
