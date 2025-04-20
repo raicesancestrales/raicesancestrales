@@ -84,7 +84,7 @@
   
           console.log("🔎 Respuesta de API:", data);
   
-          if (!data || !data.id || !data.estado || data.idreserva.toUpperCase() !== id.toUpperCase()) {
+          if (!data || !data.id || !data.estado || data.id.toUpperCase() !== id.toUpperCase()) {
             return Swal.fire("❌", "Reserva no encontrada o inválida", "error");
           }
   
