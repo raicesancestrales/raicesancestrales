@@ -45,7 +45,7 @@ export default async function handler(req, res) {
 
       await client.connect();
       const { rows } = await client.query(
-        `SELECT * FROM reservas WHERE id = $1 LIMIT 1`,
+        `SELECT * FROM reservas WHERE idreserva = $1 LIMIT 1`,
         [id]
       );
 
