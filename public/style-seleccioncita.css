@@ -12,15 +12,17 @@ body {
     flex-direction: column;
   }
   .calendar-wrapper {
-    max-width: 600px;
+    max-width: 500px;
     margin: 2rem auto;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     border-radius: 1rem;
     padding: 2rem;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
     color: #fff;
+    text-align: center;
   }
+  
   .calendar-wrapper h2 {
     text-align: center;
     margin-bottom: 1rem;
