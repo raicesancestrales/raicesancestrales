@@ -7,15 +7,15 @@ document.getElementById("buscar").addEventListener("click", async () => {
       const res = await fetch(`/api/reserva?id=${id}`);
       const data = await res.json();
   
-      if (!data || !data.idreserva) {
-        return Swal.fire("❌", "Reserva no encontrada", "error");
+      if (!data || !data.idreserva || !data.estado) {
+        return Swal.fire("❌", "Reserva no encontrada o no válida", "error");
       }
-  
+      
       // Si está confirmada, mostrar modal y salir
-      if (data.estado.toLowerCase() === "confirmada") {
-        document.getElementById("modal-info").classList.remove("oculto");
-        return;
+      if (data.estado.trim().toLowerCase() === "confirmada") {
+        return document.getElementById("modal-info").classList.remove("oculto");
       }
+      
   
       // Rellenar formulario
       document.getElementById("form-modificar").classList.remove("oculto");
