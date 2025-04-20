@@ -66,6 +66,112 @@
     </div>
   </div>
 
-  <script src="modificar.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("form-modificar");
+      const modal = document.getElementById("modal-info");
+  
+      document.getElementById("buscar").addEventListener("click", async () => {
+        const id = document.getElementById("idBusqueda").value.trim();
+  
+        if (!id || id.length < 8 || !id.toUpperCase().startsWith("RA-")) {
+          return Swal.fire("⚠️ Atención", "Debes ingresar un ID de reserva válido que empiece con RA-", "warning");
+        }
+  
+        try {
+          const res = await fetch(`/api/reserva?id=${encodeURIComponent(id)}`);
+          const data = await res.json();
+  
+          console.log("🔎 Respuesta de API:", data);
+  
+          if (!data || !data.idreserva || !data.estado || data.idreserva.toUpperCase() !== id.toUpperCase()) {
+            return Swal.fire("❌", "Reserva no encontrada o inválida", "error");
+          }
+  
+          if (data.estado.trim().toLowerCase() === "confirmada") {
+            return modal.classList.remove("oculto");
+          }
+  
+          // ✅ Mostrar formulario con datos cargados
+          form.classList.remove("oculto");
+          document.getElementById("idReserva").value = data.idreserva;
+          document.getElementById("nombre").value = data.nombre;
+          document.getElementById("nacimiento").value = data.nacimiento;
+          document.getElementById("telefono").value = data.telefono;
+          document.getElementById("correo").value = data.correo;
+          document.getElementById("signo").value = data.signo;
+          document.getElementById("fecha").value = data.fecha;
+          document.getElementById("hora").value = data.hora;
+  
+        } catch (err) {
+          console.error("❌ Error de API:", err);
+          Swal.fire("❌ Error", "Ocurrió un problema al consultar tu cita", "error");
+        }
+      });
+  
+      // ✅ Submit del formulario
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+  
+        const formData = {
+          id: form.idReserva.value,
+          nombre: form.nombre.value,
+          nacimiento: form.nacimiento.value,
+          telefono: form.telefono.value,
+          correo: form.correo.value,
+          signo: form.signo.value,
+          fecha: form.fecha.value,
+          hora: form.hora.value,
+        };
+  
+        try {
+          const res = await fetch("/api/admin/reserva", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          });
+  
+          if (!res.ok) throw new Error(await res.text());
+  
+          Swal.fire("✅ Cambios guardados", "Tu cita fue actualizada correctamente", "success");
+        } catch (err) {
+          console.error(err);
+          Swal.fire("❌ Error", err.message, "error");
+        }
+      });
+  
+      // ✅ Botón de anular
+      document.getElementById("anular").addEventListener("click", async () => {
+        const id = document.getElementById("idReserva").value;
+  
+        const confirmar = await Swal.fire({
+          title: "¿Estás seguro?",
+          text: "Esto eliminará tu cita por completo",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Sí, anular",
+        });
+  
+        if (!confirmar.isConfirmed) return;
+  
+        try {
+          const res = await fetch("/api/admin/reserva", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+          });
+  
+          if (!res.ok) throw new Error(await res.text());
+  
+          Swal.fire("🗑️ Anulada", "Tu cita ha sido anulada correctamente", "success");
+          form.classList.add("oculto");
+        } catch (err) {
+          console.error(err);
+          Swal.fire("❌ Error", "No se pudo anular la cita", "error");
+        }
+      });
+    });
+  </script>
+  
 </body>
 </html>
