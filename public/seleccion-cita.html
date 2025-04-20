@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="style-seleccioncita.css" />
 </head>
 <body>
+  <p id="zona-info" style="font-size: 0.95rem; margin-bottom: 1rem;"></p>
+
   <div class="calendar-wrapper">
     <label for="fecha">📅 Selecciona tu día:</label>
     <input type="date" id="fecha" name="fecha" required />
@@ -15,6 +17,19 @@
   </div>
 
   <script>
+     const zonaUsuario = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const zonaInfo = document.getElementById("zona-info");
+
+  try {
+    const displayNames = new Intl.DisplayNames(['es'], { type: 'region' });
+
+    const regionCode = new Intl.Locale(navigator.language).region || zonaUsuario.split("/")[1].toUpperCase();
+    const nombrePais = displayNames.of(regionCode);
+
+    zonaInfo.textContent = `🕒 Estás viendo las horas convertidas a tu zona: ${nombrePais || "Tu país"} (${zonaUsuario})`;
+  } catch (e) {
+    zonaInfo.textContent = `🕒 Estás viendo las horas en tu zona horaria: ${zonaUsuario}`;
+  }
     const fechaInput = document.getElementById("fecha");
     const horariosDiv = document.getElementById("horarios");
     const mensaje = document.getElementById("mensaje");
@@ -64,13 +79,21 @@
         const btn = document.createElement("button");
         btn.classList.add("horario-btn");
 
-        const [h, m] = hora.split(":");
         const fechaMadrid = new Date(`${fechaSeleccionada}T${hora}:00`);
-        const fechaLocal = new Date(fechaMadrid.toLocaleString("en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }));
 
-        const horaLocal = fechaLocal.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const horaEspaña = new Intl.DateTimeFormat("es-ES", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "Europe/Madrid"
+        }).format(fechaMadrid);
 
-        btn.textContent = `${hora} (España) / ${horaLocal} (Tu hora)`;
+        const horaUsuario = new Intl.DateTimeFormat("es-PE", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        }).format(fechaMadrid);
+
+        btn.textContent = `${horaEspaña} (España) / ${horaUsuario} (Tu hora)`;
 
         if (ocupadas.includes(hora)) {
           btn.classList.add("disabled");
