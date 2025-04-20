@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Selecciona tu cita</title>
   <link rel="stylesheet" href="style-seleccioncita.css" />
+  <!-- Luxon para manejo de zonas horarias -->
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 </head>
 <body>
-  <p id="zona-info" style="font-size: 0.95rem; margin-bottom: 1rem;"></p>
-
   <div class="calendar-wrapper">
+    <p id="zona-info" style="font-size: 0.95rem; margin-bottom: 1rem;"></p>
     <label for="fecha">📅 Selecciona tu día:</label>
     <input type="date" id="fecha" name="fecha" required />
     <div id="mensaje"></div>
@@ -17,19 +18,20 @@
   </div>
 
   <script>
-     const zonaUsuario = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const zonaInfo = document.getElementById("zona-info");
+    const DateTime = luxon.DateTime;
 
-  try {
-    const displayNames = new Intl.DisplayNames(['es'], { type: 'region' });
+    const zonaUsuario = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const zonaInfo = document.getElementById("zona-info");
 
-    const regionCode = new Intl.Locale(navigator.language).region || zonaUsuario.split("/")[1].toUpperCase();
-    const nombrePais = displayNames.of(regionCode);
+    try {
+      const displayNames = new Intl.DisplayNames(['es'], { type: 'region' });
+      const regionCode = new Intl.Locale(navigator.language).region || zonaUsuario.split("/")[1].toUpperCase();
+      const nombrePais = displayNames.of(regionCode);
+      zonaInfo.textContent = `🕒 Estás viendo las horas convertidas a tu zona: ${nombrePais || "Tu país"} (${zonaUsuario})`;
+    } catch (e) {
+      zonaInfo.textContent = `🕒 Estás viendo las horas en tu zona horaria: ${zonaUsuario}`;
+    }
 
-    zonaInfo.textContent = `🕒 Estás viendo las horas convertidas a tu zona: ${nombrePais || "Tu país"} (${zonaUsuario})`;
-  } catch (e) {
-    zonaInfo.textContent = `🕒 Estás viendo las horas en tu zona horaria: ${zonaUsuario}`;
-  }
     const fechaInput = document.getElementById("fecha");
     const horariosDiv = document.getElementById("horarios");
     const mensaje = document.getElementById("mensaje");
@@ -79,21 +81,25 @@
         const btn = document.createElement("button");
         btn.classList.add("horario-btn");
 
-        const fechaMadrid = new Date(`${fechaSeleccionada}T${hora}:00`);
+        const [h, m] = hora.split(":");
 
-        const horaEspaña = new Intl.DateTimeFormat("es-ES", {
-          hour: "2-digit",
-          minute: "2-digit",
-          timeZone: "Europe/Madrid"
-        }).format(fechaMadrid);
+        const fechaEspaña = DateTime.fromObject(
+          {
+            year: Number(fechaSeleccionada.split("-")[0]),
+            month: Number(fechaSeleccionada.split("-")[1]),
+            day: Number(fechaSeleccionada.split("-")[2]),
+            hour: Number(h),
+            minute: Number(m)
+          },
+          { zone: "Europe/Madrid" }
+        );
 
-        const horaUsuario = new Intl.DateTimeFormat("es-PE", {
-          hour: "2-digit",
-          minute: "2-digit",
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-        }).format(fechaMadrid);
+        const fechaUsuario = fechaEspaña.setZone(zonaUsuario);
 
-        btn.textContent = `${horaEspaña} (España) / ${horaUsuario} (Tu hora)`;
+        const horaEspaña = fechaEspaña.toFormat("HH:mm");
+        const horaLocal = fechaUsuario.toFormat("HH:mm");
+
+        btn.textContent = `${horaEspaña} (España) / ${horaLocal} (Tu hora)`;
 
         if (ocupadas.includes(hora)) {
           btn.classList.add("disabled");
