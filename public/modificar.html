@@ -72,9 +72,11 @@
 
   <script>
     async function buscarReservaPorID() {
-      const id = document.getElementById("idBusqueda").value.trim();
-      const urlParams = new URLSearchParams(window.location.search);
-      const forzado = urlParams.has("id");
+        
+        const urlParams = new URLSearchParams(window.location.search);
+const esAdmin = urlParams.get("admin") === "true";
+const forzado = urlParams.has("id") || esAdmin;
+
 
       if (!id || id.length < 8 || !id.toUpperCase().startsWith("RA-")) {
         return Swal.fire("⚠️ Atención", "Debes ingresar un ID válido que empiece con RA-", "warning");
@@ -92,9 +94,15 @@
           return Swal.fire("❌", "Reserva inválida", "error");
         }
 
-        if (data.estado.trim().toLowerCase() === "confirmada" && !forzado) {
-          return document.getElementById("modal-info").classList.remove("oculto");
-        }
+        const esAdmin = urlParams.get("admin") === "true";
+
+if (data.estado.trim().toLowerCase() === "confirmada" && !forzado && !esAdmin) {
+  return document.getElementById("modal-info").classList.remove("oculto");
+}
+
+
+
+
 
         document.getElementById("form-modificar").classList.remove("oculto");
 
