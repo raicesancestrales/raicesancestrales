@@ -78,7 +78,14 @@
     document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById("form-modificar");
       const modal = document.getElementById("modal-info");
-  
+      const urlParams = new URLSearchParams(window.location.search);
+const idPasado = urlParams.get("id");
+
+if (idPasado) {
+  document.getElementById("idBusqueda").value = idPasado;
+  document.getElementById("buscar").click();
+}
+
      
       document.getElementById("buscar").addEventListener("click", async () => {
   const id = document.getElementById("idBusqueda").value.trim();

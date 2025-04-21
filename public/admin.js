@@ -61,7 +61,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         <td>${r.estado}</td>
         <td><a href="${r.url_archivo}" target="_blank">📎</a></td>
         <td>
-          ${r.estado !== "confirmada" ? `<button onclick="cambiarEstado('${r.id}', 'confirmada')">✅</button>` : ""}
+        ${r.estado === "confirmada" ? `<button onclick="redirigirModificacion('${r.id}')">✏️</button>` : ""}
+
           ${r.estado !== "cancelada" ? `<button onclick="cambiarEstado('${r.id}', 'cancelada')">⛔</button>` : ""}
           <button onclick="eliminarReserva('${r.id}')">🗑️</button>
         </td>

@@ -35,14 +35,12 @@ export default async function handler(req, res) {
   if (req.method === "DELETE") {
     const { id } = req.body;
 
-    if (!id) {
-      await client.end();
-      return res.status(400).send("ID no recibido para eliminar");
-    }
+    if (!id) return res.status(400).send("ID faltante");
+    
 
     await client.query("DELETE FROM reservas WHERE id = $1", [id]);
     await client.end();
-    return res.status(200).send("🗑️ Reserva anulada correctamente");
+    return res.status(200).send("🗑️ Reserva eliminada");
   }
 
   await client.end();
