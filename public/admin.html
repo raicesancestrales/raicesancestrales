@@ -9,7 +9,18 @@
 </head>
 <body>
   <h1>📋 Panel de Reservas</h1>
+  <button id="btn-refrescar" style="margin-bottom: 1rem;">🔄 Refrescar tabla</button>
 
+  <div style="margin-bottom: 1rem;">
+    <label for="filtro-estado">🔎 Filtrar por estado:</label>
+    <select id="filtro-estado">
+      <option value="todos">Todos</option>
+      <option value="pendiente">Pendiente</option>
+      <option value="confirmada">Confirmada</option>
+      <option value="cancelada">Cancelada</option>
+    </select>
+  </div>
+  
   <div class="tabla-reservas">
     <table>
       <thead>
@@ -37,5 +48,7 @@
   </div>
 
   <script src="/admin.js"></script>
+  <audio id="alerta-sonido" src="notificacion.mp3" preload="auto"></audio>
+
 </body>
 </html>
