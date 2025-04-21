@@ -70,7 +70,8 @@
             return (
               fechaBD === fechaSeleccionada &&
               typeof r.estado === "string" &&
-              r.estado.trim().toLowerCase() === "confirmada"
+              ["confirmada", "pendiente"].includes(r.estado?.trim().toLowerCase())
+
             );
           })
           .map(r => r.hora?.substring(0, 5));
