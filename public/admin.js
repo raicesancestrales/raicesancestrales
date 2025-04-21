@@ -136,3 +136,9 @@ window.verDetalle = (id, e) => {
 document.getElementById("cerrar-detalle").addEventListener("click", () => {
   document.getElementById("modal-detalle").classList.add("oculto");
 });
+window.redirigirModificacion = function(id) {
+    const url = new URL("modificar.html", window.location.origin);
+    url.searchParams.set("id", id);
+    window.location.href = url;
+  };
+  
