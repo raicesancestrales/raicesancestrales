@@ -55,16 +55,12 @@
         <p><strong>Selecciona un nuevo horario:</strong></p>
         <div class="horarios" id="horarios-nuevos"></div>
       </div>
-      
-
-
 
       <button type="submit" class="confirmar">Guardar Cambios</button>
       <button type="button" id="anular" class="cancelar">Anular Cita</button>
     </form>
   </main>
 
-  <!-- Modal de mensaje -->
   <div id="modal-info" class="modal oculto">
     <div class="modal-content">
       <span class="cerrar" onclick="document.getElementById('modal-info').classList.add('oculto')">&times;</span>
@@ -75,158 +71,118 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("form-modificar");
-      const modal = document.getElementById("modal-info");
-     
-     
+    async function buscarReservaPorID() {
+      const id = document.getElementById("idBusqueda").value.trim();
       const urlParams = new URLSearchParams(window.location.search);
-const idPasado = urlParams.get("id");
+      const forzado = urlParams.has("id");
 
-if (idPasado) {
-  const input = document.getElementById("idBusqueda");
-  const btnBuscar = document.getElementById("buscar");
+      if (!id || id.length < 8 || !id.toUpperCase().startsWith("RA-")) {
+        return Swal.fire("⚠️ Atención", "Debes ingresar un ID válido que empiece con RA-", "warning");
+      }
 
-  input.value = idPasado;
+      try {
+        const res = await fetch(`/api/reserva?id=${encodeURIComponent(id)}`);
+        const data = await res.json();
 
-  Swal.fire({
-    title: "🔄 Cargando cita",
-    text: `Buscando datos para ID: ${idPasado}`,
-    icon: "info",
-    timer: 1500,
-    showConfirmButton: false,
-  });
+        if (!data || typeof data !== "object" || !("id" in data)) {
+          return Swal.fire("❌", "Reserva no encontrada", "error");
+        }
 
-  // Esperar a que todo esté listo antes de hacer clic
-  setTimeout(() => {
-    btnBuscar.click();
-  }, 500); // Delay para asegurar que todo esté cargado
-}
+        if (!data.estado || data.id.toUpperCase() !== id.toUpperCase()) {
+          return Swal.fire("❌", "Reserva inválida", "error");
+        }
 
+        if (data.estado.trim().toLowerCase() === "confirmada" && !forzado) {
+          return document.getElementById("modal-info").classList.remove("oculto");
+        }
 
+        document.getElementById("form-modificar").classList.remove("oculto");
 
+        document.getElementById("idReserva").value = data.id;
+        document.getElementById("nombre").value = data.nombre;
 
-     
-      document.getElementById("buscar").addEventListener("click", async () => {
-  const id = document.getElementById("idBusqueda").value.trim();
+        const nacimiento = new Date(data.nacimiento);
+        document.getElementById("nacimiento").value = nacimiento.toISOString().split("T")[0];
 
-  if (!id || id.length < 8 || !id.toUpperCase().startsWith("RA-")) {
-    return Swal.fire("⚠️ Atención", "Debes ingresar un ID de reserva válido que empiece con RA-", "warning");
-  }
-
-  try {
-    const res = await fetch(`/api/reserva?id=${encodeURIComponent(id)}`);
-    const data = await res.json();
-
-    console.log("🔎 Respuesta de API:", data);
-
-    if (!data || typeof data !== "object" || !("id" in data)) {
-      return Swal.fire("❌", "Reserva no encontrada", "error");
+        document.getElementById("telefono").value = data.telefono;
+        document.getElementById("correo").value = data.correo;
+        document.getElementById("signo").value = data.signo;
+        document.getElementById("fecha").value = data.fecha;
+        document.getElementById("hora").value = data.hora;
+      } catch (err) {
+        console.error(err);
+        Swal.fire("❌ Error", "No se pudo consultar la reserva", "error");
+      }
     }
 
-    if (!data.estado || data.id.toUpperCase() !== id.toUpperCase()) {
-      return Swal.fire("❌", "Reserva inválida", "error");
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const idPasado = urlParams.get("id");
 
-    if (data.estado.trim().toLowerCase() === "confirmada") {
-  if (!idPasado) {
-    // Solo mostrar el modal si NO vino desde el admin
-    return document.getElementById("modal-info").classList.remove("oculto");
-  }
-}
+      if (idPasado) {
+        document.getElementById("idBusqueda").value = idPasado;
 
+        Swal.fire({
+          title: "🔄 Cargando cita",
+          text: `Buscando datos para ID: ${idPasado}`,
+          icon: "info",
+          timer: 1200,
+          showConfirmButton: false,
+        });
 
-    // ✅ Mostrar formulario con datos cargados
-    const form = document.getElementById("form-modificar");
-    form.classList.remove("oculto");
+        setTimeout(() => buscarReservaPorID(), 600);
+      }
 
-    document.getElementById("idReserva").value = data.id;
-    document.getElementById("nombre").value = data.nombre;
+      document.getElementById("buscar").addEventListener("click", buscarReservaPorID);
 
-    // ✅ Formatear fecha de nacimiento a YYYY-MM-DD
-    const nacimiento = new Date(data.nacimiento);
-    const nacimientoISO = nacimiento.toISOString().split("T")[0];
-    document.getElementById("nacimiento").value = nacimientoISO;
+      document.getElementById("form-modificar").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
 
-    document.getElementById("telefono").value = data.telefono;
-    document.getElementById("correo").value = data.correo;
-    document.getElementById("signo").value = data.signo;
-    document.getElementById("fecha").value = data.fecha;
-    document.getElementById("hora").value = data.hora;
+        const formData = {
+          id: form.idReserva.value,
+          nombre: form.nombre.value,
+          nacimiento: form.nacimiento.value,
+          telefono: form.telefono.value,
+          correo: form.correo.value,
+          signo: form.signo.value,
+          fecha: form.fecha.value,
+          hora: form.hora.value,
+        };
 
-  } catch (err) {
-    console.error("❌ Error de API:", err);
-    Swal.fire("❌ Error", "Ocurrió un problema al consultar tu cita", "error");
-  }
-});
+        const confirmar = await Swal.fire({
+          title: "¿Confirmar cambios?",
+          html: `<p><strong>Fecha nueva:</strong> ${formData.fecha}</p><p><strong>Hora nueva:</strong> ${formData.hora}</p>`,
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Sí, guardar",
+          cancelButtonText: "Cancelar"
+        });
 
+        if (!confirmar.isConfirmed) return;
 
-     
+        try {
+          const res = await fetch("/api/admin/reserva", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          });
 
-      // ✅ Submit del formulario
-      form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+          if (!res.ok) throw new Error(await res.text());
 
-  const formData = {
-    id: form.idReserva.value,
-    nombre: form.nombre.value,
-    nacimiento: form.nacimiento.value,
-    telefono: form.telefono.value,
-    correo: form.correo.value,
-    signo: form.signo.value,
-    fecha: form.fecha.value,
-    hora: form.hora.value,
-  };
+          await Swal.fire("✅ Modificación exitosa", "Tu cita fue actualizada", "success");
+          form.reset();
+          form.classList.add("oculto");
+          setTimeout(() => window.location.href = "index.html", 1000);
+        } catch (err) {
+          console.error(err);
+          Swal.fire("❌ Error", err.message, "error");
+        }
+      });
 
-  // 🧾 Modal previo de confirmación
-  const confirmar = await Swal.fire({
-    title: "¿Confirmar cambios?",
-    html: `
-      <p><strong>Fecha nueva:</strong> ${formData.fecha}</p>
-      <p><strong>Hora nueva:</strong> ${formData.hora}</p>
-      <p>¿Deseas aplicar estos cambios?</p>
-    `,
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Sí, guardar",
-    cancelButtonText: "Cancelar"
-  });
-
-  if (!confirmar.isConfirmed) return;
-
-  try {
-    const res = await fetch("/api/admin/reserva", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    if (!res.ok) throw new Error(await res.text());
-
-    await Swal.fire("✅ Modificación exitosa", "Tu cita fue actualizada", "success");
-
-    // ✅ Limpiar y redirigir
-    form.reset();
-    form.classList.add("oculto");
-    setTimeout(() => {
-      window.location.href = "index.html"; // o la ruta que prefieras
-    }, 1000);
-
-  } catch (err) {
-    console.error(err);
-    Swal.fire("❌ Error", err.message, "error");
-  }
-});
-
-    
-    
-    
-    
-    
-      // ✅ Botón de anular
       document.getElementById("anular").addEventListener("click", async () => {
         const id = document.getElementById("idReserva").value;
-  
+
         const confirmar = await Swal.fire({
           title: "¿Estás seguro?",
           text: "Esto eliminará tu cita por completo",
@@ -234,86 +190,80 @@ if (idPasado) {
           showCancelButton: true,
           confirmButtonText: "Sí, anular",
         });
-  
+
         if (!confirmar.isConfirmed) return;
-  
+
         try {
           const res = await fetch("/api/admin/reserva", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id }),
           });
-  
+
           if (!res.ok) throw new Error(await res.text());
-  
+
           Swal.fire("🗑️ Anulada", "Tu cita ha sido anulada correctamente", "success");
-          form.classList.add("oculto");
+          document.getElementById("form-modificar").classList.add("oculto");
         } catch (err) {
           console.error(err);
           Swal.fire("❌ Error", "No se pudo anular la cita", "error");
         }
       });
+
       document.getElementById("fecha").addEventListener("change", async () => {
-  const fechaSeleccionada = document.getElementById("fecha").value;
-  const horariosDiv = document.getElementById("horarios-nuevos");
-  const contenedor = document.getElementById("seleccion-horario");
+        const fechaSeleccionada = document.getElementById("fecha").value;
+        const horariosDiv = document.getElementById("horarios-nuevos");
+        const contenedor = document.getElementById("seleccion-horario");
 
-  if (!fechaSeleccionada) return;
-  horariosDiv.innerHTML = "";
-  contenedor.classList.remove("oculto");
+        if (!fechaSeleccionada) return;
+        horariosDiv.innerHTML = "";
+        contenedor.classList.remove("oculto");
 
-  const horariosDisponibles = [
-    "10:00", "10:45", "11:30", "12:15", "13:00",
-    "17:00", "17:45", "18:30", "19:15", "20:00", "20:45", "21:30"
-  ];
+        const horariosDisponibles = [
+          "10:00", "10:45", "11:30", "12:15", "13:00",
+          "17:00", "17:45", "18:30", "19:15", "20:00", "20:45", "21:30"
+        ];
 
-  let ocupadas = [];
+        let ocupadas = [];
 
-  try {
-    const res = await fetch("/api/admin/reserva");
-    const data = await res.json();
+        try {
+          const res = await fetch("/api/admin/reserva");
+          const data = await res.json();
 
-    ocupadas = data
-      .filter(r => {
-        const fechaBD = new Date(r.fecha).toISOString().split("T")[0];
-        return (
-          fechaBD === fechaSeleccionada &&
-          r.estado.trim().toLowerCase() === "confirmada"
-        );
-      })
-      .map(r => r.hora?.substring(0, 5));
-  } catch (error) {
-    console.error("❌ Error al cargar reservas:", error);
-  }
+          ocupadas = data
+            .filter(r => {
+              const fechaBD = new Date(r.fecha).toISOString().split("T")[0];
+              return (
+                fechaBD === fechaSeleccionada &&
+                r.estado.trim().toLowerCase() === "confirmada"
+              );
+            })
+            .map(r => r.hora?.substring(0, 5));
+        } catch (error) {
+          console.error("❌ Error al cargar reservas:", error);
+        }
 
-  horariosDisponibles.forEach(hora => {
-    const btn = document.createElement("button");
-    btn.classList.add("horario-btn");
-   
-    btn.setAttribute("type", "button"); // 👈 Este es el truco clave
-    btn.textContent = hora;
+        horariosDisponibles.forEach(hora => {
+          const btn = document.createElement("button");
+          btn.classList.add("horario-btn");
+          btn.setAttribute("type", "button");
+          btn.textContent = hora;
 
-    if (ocupadas.includes(hora)) {
-      btn.classList.add("disabled");
-      btn.disabled = true;
-      btn.textContent += " ⛔";
-    } else {
-      btn.onclick = () => {
-        document.getElementById("hora").value = hora;
-        contenedor.classList.add("oculto"); // ocultar los botones después de elegir
-      };
-    }
+          if (ocupadas.includes(hora)) {
+            btn.classList.add("disabled");
+            btn.disabled = true;
+            btn.textContent += " ⛔";
+          } else {
+            btn.onclick = () => {
+              document.getElementById("hora").value = hora;
+              contenedor.classList.add("oculto");
+            };
+          }
 
-    horariosDiv.appendChild(btn);
-  });
-});
-
-
-
-
-
+          horariosDiv.appendChild(btn);
+        });
+      });
     });
   </script>
-  
 </body>
 </html>
