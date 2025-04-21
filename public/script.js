@@ -16,9 +16,14 @@ document.addEventListener("DOMContentLoaded", function () {
   // Modal
   const modal = document.getElementById("modal");
   const btnAnular = document.getElementById("btn-anular");
+
   const cerrarModal = document.getElementById("cerrar-modal");
   const confirmar = document.querySelector(".confirmar");
-
+if (btnAnular) {
+  btnAnular.addEventListener("click", () => {
+    modal.classList.remove("oculto");
+  });
+}
   btnAnular.addEventListener("click", () => {
     modal.classList.remove("oculto");
   });
