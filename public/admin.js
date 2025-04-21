@@ -145,6 +145,7 @@ document.getElementById("cerrar-detalle").addEventListener("click", () => {
 window.redirigirModificacion = function(id) {
     const url = new URL("modificar.html", window.location.origin);
     url.searchParams.set("id", id);
+    url.searchParams.set("admin", "true"); // ✅ así puedes editar confirmadas
     window.location.href = url;
   };
   

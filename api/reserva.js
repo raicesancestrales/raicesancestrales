@@ -65,6 +65,13 @@ export default async function handler(req, res) {
 
   const form = new IncomingForm({ multiples: false, keepExtensions: true, uploadDir: "/tmp" });
 
+
+
+
+
+
+
+
 // ✅ NUEVO: Actualizar estado de una reserva
 if (req.method === 'PUT') {
   try {
@@ -75,10 +82,10 @@ if (req.method === 'PUT') {
     const bodyString = Buffer.concat(buffers).toString();
     const body = JSON.parse(bodyString);
 
-    const { id, estado } = body;
+    const { id, estado, nombre, nacimiento, telefono, correo, signo, fecha, hora } = body;
 
-    if (!id || !estado) {
-      return res.status(400).json({ error: "Faltan campos obligatorios" });
+    if (!id) {
+      return res.status(400).json({ error: "Falta el ID de la reserva" });
     }
 
     const client = new Client({
@@ -88,17 +95,44 @@ if (req.method === 'PUT') {
 
     await client.connect();
 
-    const update = `UPDATE reservas SET estado = $1 WHERE id = $2`;
-    await client.query(update, [estado, id]);
+    if (estado && !nombre) {
+      // Solo actualizar estado (usado por botones de admin)
+      const update = `UPDATE reservas SET estado = $1 WHERE id = $2`;
+      await client.query(update, [estado, id]);
+    } else {
+      // Actualizar todos los campos del formulario
+      const update = `
+        UPDATE reservas SET
+          nombre = $1,
+          nacimiento = $2,
+          telefono = $3,
+          correo = $4,
+          signo = $5,
+          fecha = $6,
+          hora = $7,
+          estado = 'confirmada'
+        WHERE id = $8
+      `;
+      await client.query(update, [
+        nombre,
+        nacimiento,
+        telefono,
+        correo,
+        signo,
+        fecha,
+        hora,
+        id
+      ]);
+    }
 
     await client.end();
-
-    return res.status(200).send("✅ Estado actualizado correctamente");
+    return res.status(200).send("✅ Reserva actualizada correctamente");
   } catch (err) {
-    console.error("❌ Error al actualizar estado:", err);
-    return res.status(500).send("Error interno al actualizar estado");
+    console.error("❌ Error al actualizar reserva:", err);
+    return res.status(500).send("Error interno al actualizar la reserva");
   }
 }
+
 
 
 
