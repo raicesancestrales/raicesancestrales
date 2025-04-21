@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       tablaBody.innerHTML = "";
       reservas.forEach(r => {
         const tr = document.createElement("tr");
-  
+        console.log(r); // ✅ te va a mostrar el valor real de estado desde la BD
+
         tr.innerHTML = `
           <td><a href="#" onclick="verDetalle('${r.id}', event)">${r.id}</a></td>
           <td>${r.nombre}</td>
