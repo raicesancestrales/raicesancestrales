@@ -1,11 +1,19 @@
 let reservasGlobal = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const clave = prompt("🔐 Ingrese clave de acceso:");
-  if (clave !== "tarot2025") {
-    alert("Acceso denegado");
-    return window.location.href = "/";
-  }
+    const clave = prompt("🔐 Ingrese clave de acceso:");
+    const acceso = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clave }),
+    });
+    
+    const data = await acceso.json();
+    if (!data.acceso) {
+      alert("Acceso denegado");
+      return window.location.href = "/";
+    }
+    
 
   const tablaBody = document.getElementById("tabla-reservas-body");
   const filtroEstado = document.getElementById("filtro-estado");
