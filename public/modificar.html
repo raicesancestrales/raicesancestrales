@@ -132,43 +132,66 @@
 
      
 
-
-
-
-
-      
-  
       // ✅ Submit del formulario
       form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-  
-        const formData = {
-          id: form.idReserva.value,
-          nombre: form.nombre.value,
-          nacimiento: form.nacimiento.value,
-          telefono: form.telefono.value,
-          correo: form.correo.value,
-          signo: form.signo.value,
-          fecha: form.fecha.value,
-          hora: form.hora.value,
-        };
-  
-        try {
-          const res = await fetch("/api/admin/reserva", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-          });
-  
-          if (!res.ok) throw new Error(await res.text());
-  
-          Swal.fire("✅ Cambios guardados", "Tu cita fue actualizada correctamente", "success");
-        } catch (err) {
-          console.error(err);
-          Swal.fire("❌ Error", err.message, "error");
-        }
-      });
-  
+  e.preventDefault();
+
+  const formData = {
+    id: form.idReserva.value,
+    nombre: form.nombre.value,
+    nacimiento: form.nacimiento.value,
+    telefono: form.telefono.value,
+    correo: form.correo.value,
+    signo: form.signo.value,
+    fecha: form.fecha.value,
+    hora: form.hora.value,
+  };
+
+  // 🧾 Modal previo de confirmación
+  const confirmar = await Swal.fire({
+    title: "¿Confirmar cambios?",
+    html: `
+      <p><strong>Fecha nueva:</strong> ${formData.fecha}</p>
+      <p><strong>Hora nueva:</strong> ${formData.hora}</p>
+      <p>¿Deseas aplicar estos cambios?</p>
+    `,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Sí, guardar",
+    cancelButtonText: "Cancelar"
+  });
+
+  if (!confirmar.isConfirmed) return;
+
+  try {
+    const res = await fetch("/api/admin/reserva", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+
+    await Swal.fire("✅ Modificación exitosa", "Tu cita fue actualizada", "success");
+
+    // ✅ Limpiar y redirigir
+    form.reset();
+    form.classList.add("oculto");
+    setTimeout(() => {
+      window.location.href = "index.html"; // o la ruta que prefieras
+    }, 1000);
+
+  } catch (err) {
+    console.error(err);
+    Swal.fire("❌ Error", err.message, "error");
+  }
+});
+
+    
+    
+    
+    
+    
       // ✅ Botón de anular
       document.getElementById("anular").addEventListener("click", async () => {
         const id = document.getElementById("idReserva").value;
@@ -235,6 +258,8 @@
   horariosDisponibles.forEach(hora => {
     const btn = document.createElement("button");
     btn.classList.add("horario-btn");
+   
+    btn.setAttribute("type", "button"); // 👈 Este es el truco clave
     btn.textContent = hora;
 
     if (ocupadas.includes(hora)) {
