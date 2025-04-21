@@ -69,6 +69,7 @@
             const fechaBD = new Date(r.fecha).toISOString().split("T")[0];
             return (
               fechaBD === fechaSeleccionada &&
+              typeof r.estado === "string" &&
               r.estado.trim().toLowerCase() === "confirmada"
             );
           })
