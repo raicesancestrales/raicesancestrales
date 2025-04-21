@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top Clientes</title>
+  <link rel="stylesheet" href="style-admin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <h1>👥 Clientes con más de 1 cita</h1>
+
+  <div class="tabla-reservas">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Cantidad de Citas</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-clientes"></tbody>
+    </table>
+  </div>
+
+  <!-- 🔍 Modal para historial -->
+  <div id="modal-historial" class="modal oculto">
+    <div class="modal-content">
+      <span class="cerrar" onclick="document.getElementById('modal-historial').classList.add('oculto')">&times;</span>
+      <h3>📋 Historial de citas</h3>
+      <div id="contenido-historial"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const res = await fetch("/api/admin/clientes");
+      const data = await res.json();
+
+      const tbody = document.getElementById("tabla-clientes");
+
+      data.forEach(c => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><a href="#" onclick="verHistorial('${c.correo}', event)">${c.nombre}</a></td>
+          <td>${c.correo}</td>
+          <td>${c.telefono}</td>
+          <td>${c.total}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+
+    async function verHistorial(correo, e) {
+      e.preventDefault();
+      const res = await fetch(`/api/admin/historial?correo=${encodeURIComponent(correo)}`);
+      const citas = await res.json();
+
+      const contenedor = document.getElementById("contenido-historial");
+      contenedor.innerHTML = citas.map(c => `
+        <p><strong>${c.fecha}</strong> a las <strong>${c.hora}</strong> — Estado: ${c.estado}</p>
+      `).join("");
+
+      document.getElementById("modal-historial").classList.remove("oculto");
+    }
+  </script>
+</body>
+</html>
