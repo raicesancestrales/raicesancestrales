@@ -71,43 +71,64 @@
       const form = document.getElementById("form-modificar");
       const modal = document.getElementById("modal-info");
   
+     
       document.getElementById("buscar").addEventListener("click", async () => {
-        const id = document.getElementById("idBusqueda").value.trim();
-  
-        if (!id || id.length < 8 || !id.toUpperCase().startsWith("RA-")) {
-          return Swal.fire("⚠️ Atención", "Debes ingresar un ID de reserva válido que empiece con RA-", "warning");
-        }
-  
-        try {
-          const res = await fetch(`/api/reserva?id=${encodeURIComponent(id)}`);
-          const data = await res.json();
-  
-          console.log("🔎 Respuesta de API:", data);
-  
-          if (!data || !data.id || !data.estado || data.id.toUpperCase() !== id.toUpperCase()) {
-            return Swal.fire("❌", "Reserva no encontrada o inválida", "error");
-          }
-  
-          if (data.estado.trim().toLowerCase() === "confirmada") {
-            return modal.classList.remove("oculto");
-          }
-  
-          // ✅ Mostrar formulario con datos cargados
-          form.classList.remove("oculto");
-          document.getElementById("idReserva").value = data.id;
-          document.getElementById("nombre").value = data.nombre;
-          document.getElementById("nacimiento").value = data.nacimiento;
-          document.getElementById("telefono").value = data.telefono;
-          document.getElementById("correo").value = data.correo;
-          document.getElementById("signo").value = data.signo;
-          document.getElementById("fecha").value = data.fecha;
-          document.getElementById("hora").value = data.hora;
-  
-        } catch (err) {
-          console.error("❌ Error de API:", err);
-          Swal.fire("❌ Error", "Ocurrió un problema al consultar tu cita", "error");
-        }
-      });
+  const id = document.getElementById("idBusqueda").value.trim();
+
+  if (!id || id.length < 8 || !id.toUpperCase().startsWith("RA-")) {
+    return Swal.fire("⚠️ Atención", "Debes ingresar un ID de reserva válido que empiece con RA-", "warning");
+  }
+
+  try {
+    const res = await fetch(`/api/reserva?id=${encodeURIComponent(id)}`);
+    const data = await res.json();
+
+    console.log("🔎 Respuesta de API:", data);
+
+    if (!data || typeof data !== "object" || !("id" in data)) {
+      return Swal.fire("❌", "Reserva no encontrada", "error");
+    }
+
+    if (!data.estado || data.id.toUpperCase() !== id.toUpperCase()) {
+      return Swal.fire("❌", "Reserva inválida", "error");
+    }
+
+    if (data.estado.trim().toLowerCase() === "confirmada") {
+      return document.getElementById("modal-info").classList.remove("oculto");
+    }
+
+    // ✅ Mostrar formulario con datos cargados
+    const form = document.getElementById("form-modificar");
+    form.classList.remove("oculto");
+
+    document.getElementById("idReserva").value = data.id;
+    document.getElementById("nombre").value = data.nombre;
+
+    // ✅ Formatear fecha de nacimiento a YYYY-MM-DD
+    const nacimiento = new Date(data.nacimiento);
+    const nacimientoISO = nacimiento.toISOString().split("T")[0];
+    document.getElementById("nacimiento").value = nacimientoISO;
+
+    document.getElementById("telefono").value = data.telefono;
+    document.getElementById("correo").value = data.correo;
+    document.getElementById("signo").value = data.signo;
+    document.getElementById("fecha").value = data.fecha;
+    document.getElementById("hora").value = data.hora;
+
+  } catch (err) {
+    console.error("❌ Error de API:", err);
+    Swal.fire("❌ Error", "Ocurrió un problema al consultar tu cita", "error");
+  }
+});
+
+
+     
+
+
+
+
+
+      
   
       // ✅ Submit del formulario
       form.addEventListener("submit", async (e) => {
