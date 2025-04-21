@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-  
+
   async function cargarReservas() {
     const res = await fetch("/api/admin/reserva");
     const reservas = await res.json();
@@ -64,12 +64,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         <td>${r.hora}</td>
         <td>${r.estado}</td>
         <td><a href="${r.url_archivo}" target="_blank">📎</a></td>
-        <td>
-        ${r.estado === "confirmada" ? `<button onclick="redirigirModificacion('${r.id}')">✏️</button>` : ""}
+       <td>
+  ${r.estado === "pendiente" ? `<button title="Confirmar" onclick="cambiarEstado('${r.id}', 'confirmada')">✅</button>
+` : ""}
+  ${r.estado === "confirmada" ? `<button onclick="redirigirModificacion('${r.id}')">✏️</button>` : ""}
+  ${r.estado !== "cancelada" ? `<button onclick="cambiarEstado('${r.id}', 'cancelada')">⛔</button>` : ""}
+  <button onclick="eliminarReserva('${r.id}')">🗑️</button>
+</td>
 
-          ${r.estado !== "cancelada" ? `<button onclick="cambiarEstado('${r.id}', 'cancelada')">⛔</button>` : ""}
-          <button onclick="eliminarReserva('${r.id}')">🗑️</button>
-        </td>
       `;
 
       tablaBody.appendChild(tr);
