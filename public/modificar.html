@@ -71,57 +71,63 @@
   </div>
 
   <script>
-    async function buscarReservaPorID() {
-        
-        const urlParams = new URLSearchParams(window.location.search);
-const esAdmin = urlParams.get("admin") === "true";
-const forzado = urlParams.has("id") || esAdmin;
 
 
-      if (!id || id.length < 8 || !id.toUpperCase().startsWith("RA-")) {
-        return Swal.fire("⚠️ Atención", "Debes ingresar un ID válido que empiece con RA-", "warning");
-      }
+async function buscarReservaPorID() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const esAdmin = urlParams.get("admin") === "true";
+  const forzado = urlParams.has("id") || esAdmin;
 
-      try {
-        const res = await fetch(`/api/reserva?id=${encodeURIComponent(id)}`);
-        const data = await res.json();
+  const id = document.getElementById("idBusqueda").value.trim(); // 👉 Esto iba antes y es importante
 
-        if (!data || typeof data !== "object" || !("id" in data)) {
-          return Swal.fire("❌", "Reserva no encontrada", "error");
-        }
+  if (!id || id.length < 8 || !id.toUpperCase().startsWith("RA-")) {
+    return Swal.fire("⚠️ Atención", "Debes ingresar un ID válido que empiece con RA-", "warning");
+  }
 
-        if (!data.estado || data.id.toUpperCase() !== id.toUpperCase()) {
-          return Swal.fire("❌", "Reserva inválida", "error");
-        }
+  try {
+    const res = await fetch(`/api/reserva?id=${encodeURIComponent(id)}`);
+    const data = await res.json();
 
-        const esAdmin = urlParams.get("admin") === "true";
+    console.log("DATA:", data); // Para depurar
 
-if (data.estado.trim().toLowerCase() === "confirmada" && !forzado && !esAdmin) {
-  return document.getElementById("modal-info").classList.remove("oculto");
+    if (!data || typeof data !== "object" || !("id" in data)) {
+      return Swal.fire("❌", "Reserva no encontrada", "error");
+    }
+
+    if (!data.estado || data.id.toUpperCase() !== id.toUpperCase()) {
+      return Swal.fire("❌", "Reserva inválida", "error");
+    }
+
+    if (data.estado.trim().toLowerCase() === "confirmada" && !forzado) {
+      return document.getElementById("modal-info").classList.remove("oculto");
+    }
+
+    // Mostrar formulario con los datos
+    document.getElementById("form-modificar").classList.remove("oculto");
+    document.getElementById("idReserva").value = data.id;
+    document.getElementById("nombre").value = data.nombre;
+
+    const nacimiento = new Date(data.nacimiento);
+    document.getElementById("nacimiento").value = nacimiento.toISOString().split("T")[0];
+
+    document.getElementById("telefono").value = data.telefono;
+    document.getElementById("correo").value = data.correo;
+    document.getElementById("signo").value = data.signo;
+    document.getElementById("fecha").value = data.fecha;
+    document.getElementById("hora").value = data.hora;
+  } catch (err) {
+    console.error(err);
+    Swal.fire("❌ Error", "No se pudo consultar la reserva", "error");
+  }
 }
 
+    
 
 
 
 
-        document.getElementById("form-modificar").classList.remove("oculto");
 
-        document.getElementById("idReserva").value = data.id;
-        document.getElementById("nombre").value = data.nombre;
 
-        const nacimiento = new Date(data.nacimiento);
-        document.getElementById("nacimiento").value = nacimiento.toISOString().split("T")[0];
-
-        document.getElementById("telefono").value = data.telefono;
-        document.getElementById("correo").value = data.correo;
-        document.getElementById("signo").value = data.signo;
-        document.getElementById("fecha").value = data.fecha;
-        document.getElementById("hora").value = data.hora;
-      } catch (err) {
-        console.error(err);
-        Swal.fire("❌ Error", "No se pudo consultar la reserva", "error");
-      }
-    }
 
     document.addEventListener("DOMContentLoaded", () => {
       const urlParams = new URLSearchParams(window.location.search);
