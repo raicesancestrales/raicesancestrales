@@ -51,6 +51,14 @@
       <label for="hora">Nueva Hora:</label>
       <input type="time" id="hora" name="hora" required>
 
+      <div id="seleccion-horario" class="oculto">
+        <p><strong>Selecciona un nuevo horario:</strong></p>
+        <div class="horarios" id="horarios-nuevos"></div>
+      </div>
+      
+
+
+
       <button type="submit" class="confirmar">Guardar Cambios</button>
       <button type="button" id="anular" class="cancelar">Anular Cita</button>
     </form>
@@ -191,6 +199,63 @@
           Swal.fire("❌ Error", "No se pudo anular la cita", "error");
         }
       });
+      document.getElementById("fecha").addEventListener("change", async () => {
+  const fechaSeleccionada = document.getElementById("fecha").value;
+  const horariosDiv = document.getElementById("horarios-nuevos");
+  const contenedor = document.getElementById("seleccion-horario");
+
+  if (!fechaSeleccionada) return;
+  horariosDiv.innerHTML = "";
+  contenedor.classList.remove("oculto");
+
+  const horariosDisponibles = [
+    "10:00", "10:45", "11:30", "12:15", "13:00",
+    "17:00", "17:45", "18:30", "19:15", "20:00", "20:45", "21:30"
+  ];
+
+  let ocupadas = [];
+
+  try {
+    const res = await fetch("/api/admin/reserva");
+    const data = await res.json();
+
+    ocupadas = data
+      .filter(r => {
+        const fechaBD = new Date(r.fecha).toISOString().split("T")[0];
+        return (
+          fechaBD === fechaSeleccionada &&
+          r.estado.trim().toLowerCase() === "confirmada"
+        );
+      })
+      .map(r => r.hora?.substring(0, 5));
+  } catch (error) {
+    console.error("❌ Error al cargar reservas:", error);
+  }
+
+  horariosDisponibles.forEach(hora => {
+    const btn = document.createElement("button");
+    btn.classList.add("horario-btn");
+    btn.textContent = hora;
+
+    if (ocupadas.includes(hora)) {
+      btn.classList.add("disabled");
+      btn.disabled = true;
+      btn.textContent += " ⛔";
+    } else {
+      btn.onclick = () => {
+        document.getElementById("hora").value = hora;
+        contenedor.classList.add("oculto"); // ocultar los botones después de elegir
+      };
+    }
+
+    horariosDiv.appendChild(btn);
+  });
+});
+
+
+
+
+
     });
   </script>
   
