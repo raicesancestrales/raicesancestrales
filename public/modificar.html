@@ -111,8 +111,12 @@ if (idPasado) {
     }
 
     if (data.estado.trim().toLowerCase() === "confirmada") {
-      return document.getElementById("modal-info").classList.remove("oculto");
-    }
+  if (!idPasado) {
+    // Solo mostrar el modal si NO vino desde el admin
+    return document.getElementById("modal-info").classList.remove("oculto");
+  }
+}
+
 
     // ✅ Mostrar formulario con datos cargados
     const form = document.getElementById("form-modificar");
