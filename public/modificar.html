@@ -78,15 +78,33 @@
     document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById("form-modificar");
       const modal = document.getElementById("modal-info");
+     
+     
       const urlParams = new URLSearchParams(window.location.search);
 const idPasado = urlParams.get("id");
 
 if (idPasado) {
-  document.getElementById("idBusqueda").value = idPasado;
-  Swal.fire("🔄 Cargando cita", `Buscando datos para ID: ${idPasado}`, "info");
+  const input = document.getElementById("idBusqueda");
+  const btnBuscar = document.getElementById("buscar");
 
-  document.getElementById("buscar").click();
+  input.value = idPasado;
+
+  Swal.fire({
+    title: "🔄 Cargando cita",
+    text: `Buscando datos para ID: ${idPasado}`,
+    icon: "info",
+    timer: 1500,
+    showConfirmButton: false,
+  });
+
+  // Esperar a que todo esté listo antes de hacer clic
+  setTimeout(() => {
+    btnBuscar.click();
+  }, 500); // Delay para asegurar que todo esté cargado
 }
+
+
+
 
      
       document.getElementById("buscar").addEventListener("click", async () => {
