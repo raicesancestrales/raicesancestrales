@@ -33,7 +33,7 @@ export default async function handler(req, res) {
 
   // ✅ NUEVO: obtener una reserva por ID
   if (req.method === 'GET') {
-    const { id } = req.query;
+    const { id, estado } = req.query;
 
     if (!id) return res.status(400).json({ error: "Falta el ID de reserva" });
 
@@ -64,6 +64,46 @@ export default async function handler(req, res) {
   }
 
   const form = new IncomingForm({ multiples: false, keepExtensions: true, uploadDir: "/tmp" });
+
+// ✅ NUEVO: Actualizar estado de una reserva
+if (req.method === 'PUT') {
+  try {
+    const buffers = [];
+    for await (const chunk of req) {
+      buffers.push(chunk);
+    }
+    const bodyString = Buffer.concat(buffers).toString();
+    const body = JSON.parse(bodyString);
+
+    const { id, estado } = body;
+
+    if (!id || !estado) {
+      return res.status(400).json({ error: "Faltan campos obligatorios" });
+    }
+
+    const client = new Client({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+    });
+
+    await client.connect();
+
+    const update = `UPDATE reservas SET estado = $1 WHERE id = $2`;
+    await client.query(update, [estado, id]);
+
+    await client.end();
+
+    return res.status(200).send("✅ Estado actualizado correctamente");
+  } catch (err) {
+    console.error("❌ Error al actualizar estado:", err);
+    return res.status(500).send("Error interno al actualizar estado");
+  }
+}
+
+
+
+
+
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
