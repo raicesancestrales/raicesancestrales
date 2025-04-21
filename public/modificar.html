@@ -83,6 +83,8 @@ const idPasado = urlParams.get("id");
 
 if (idPasado) {
   document.getElementById("idBusqueda").value = idPasado;
+  Swal.fire("🔄 Cargando cita", `Buscando datos para ID: ${idPasado}`, "info");
+
   document.getElementById("buscar").click();
 }
 

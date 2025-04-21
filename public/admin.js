@@ -18,6 +18,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const tablaBody = document.getElementById("tabla-reservas-body");
   const filtroEstado = document.getElementById("filtro-estado");
 
+
+
+
+  
   async function cargarReservas() {
     const res = await fetch("/api/admin/reserva");
     const reservas = await res.json();
