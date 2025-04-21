@@ -24,83 +24,12 @@ export const config = {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // ✅ PUT: actualizar estado o todos los datos
-  if (req.method === 'PUT') {
-    try {
-      const buffers = [];
-      for await (const chunk of req) {
-        buffers.push(chunk);
-      }
-      const bodyString = Buffer.concat(buffers).toString();
-      const body = JSON.parse(bodyString);
-
-      const { id, estado, nombre, nacimiento, telefono, correo, signo, fecha, hora } = body;
-
-      if (!id) return res.status(400).json({ error: "Falta el ID de la reserva" });
-
-      const client = new Client({
-        connectionString: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false },
-      });
-
-      await client.connect();
-
-      if (estado && !nombre) {
-        // Solo cambiar estado (desde admin)
-        await client.query(`UPDATE reservas SET estado = $1 WHERE id = $2`, [estado, id]);
-      } else {
-        // Actualizar todos los datos desde formulario
-        await client.query(`
-          UPDATE reservas SET
-            nombre = $1,
-            nacimiento = $2,
-            telefono = $3,
-            correo = $4,
-            signo = $5,
-            fecha = $6,
-            hora = $7,
-            estado = 'confirmada'
-          WHERE id = $8
-        `, [nombre, nacimiento, telefono, correo, signo, fecha, hora, id]);
-      }
-
-      await client.end();
-      return res.status(200).send("✅ Reserva actualizada correctamente");
-    } catch (err) {
-      console.error("❌ Error al actualizar reserva:", err);
-      return res.status(500).send("Error interno al actualizar la reserva");
-    }
-  }
-
-  // ✅ GET: obtener una reserva por ID
-  if (req.method === 'GET') {
-    const { id } = req.query;
-    if (!id) return res.status(400).json({ error: "Falta el ID de reserva" });
-
-    try {
-      const client = new Client({
-        connectionString: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false },
-      });
-
-      await client.connect();
-      const { rows } = await client.query(`SELECT * FROM reservas WHERE id = $1 LIMIT 1`, [id]);
-      await client.end();
-
-      if (!rows.length) return res.status(404).json({ error: "Reserva no encontrada" });
-      return res.status(200).json(rows[0]);
-    } catch (error) {
-      console.error("❌ Error al buscar reserva:", error);
-      return res.status(500).json({ error: "Error interno del servidor" });
-    }
-  }
-
-  // ✅ POST: registrar nueva reserva
+  // ✅ POST: registrar nueva reserva (prioridad alta)
   if (req.method === 'POST') {
     const form = new IncomingForm({ multiples: false, keepExtensions: true, uploadDir: "/tmp" });
 
@@ -196,8 +125,32 @@ export default async function handler(req, res) {
         return res.status(500).send('Error interno al guardar la reserva');
       }
     });
+    return;
   }
 
-  // 🚫 Si llega aquí y no es GET/PUT/POST
+  // ✅ GET: obtener reserva por ID (opcional para validación)
+  if (req.method === 'GET') {
+    const { id } = req.query;
+    if (!id) return res.status(400).json({ error: "Falta el ID de reserva" });
+
+    try {
+      const client = new Client({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false },
+      });
+
+      await client.connect();
+      const { rows } = await client.query(`SELECT * FROM reservas WHERE id = $1 LIMIT 1`, [id]);
+      await client.end();
+
+      if (!rows.length) return res.status(404).json({ error: "Reserva no encontrada" });
+      return res.status(200).json(rows[0]);
+    } catch (error) {
+      console.error("❌ Error al buscar reserva:", error);
+      return res.status(500).json({ error: "Error interno del servidor" });
+    }
+  }
+
+  // ❌ Si no es GET o POST
   return res.status(405).send('Método no permitido');
 }
