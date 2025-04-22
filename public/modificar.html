@@ -244,15 +244,21 @@ async function buscarReservaPorID() {
           const res = await fetch("/api/admin/reserva");
           const data = await res.json();
 
+
           ocupadas = data
-            .filter(r => {
-              const fechaBD = new Date(r.fecha).toISOString().split("T")[0];
-              return (
-                fechaBD === fechaSeleccionada &&
-                r.estado.trim().toLowerCase() === "confirmada"
-              );
-            })
-            .map(r => r.hora?.substring(0, 5));
+  .filter(r => {
+    const fechaBD = new Date(r.fecha).toISOString().split("T")[0];
+    return (
+      fechaBD === fechaSeleccionada &&
+      r.estado.trim().toLowerCase() !== "cancelada" &&
+      r.id !== document.getElementById("idReserva").value // ⚠️ Excepto la propia
+    );
+  })
+  .map(r => r.hora?.substring(0, 5));
+
+          
+
+
         } catch (error) {
           console.error("❌ Error al cargar reservas:", error);
         }

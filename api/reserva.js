@@ -84,9 +84,10 @@ export default async function handler(req, res) {
         await client.connect();
 
         const checkQuery = `
-          SELECT COUNT(*) FROM reservas
-          WHERE fecha = $1 AND hora = $2 AND estado = 'confirmada'
-        `;
+  SELECT COUNT(*) FROM reservas
+  WHERE fecha = $1 AND hora = $2 AND estado != 'cancelada'
+`;
+
         const checkResult = await client.query(checkQuery, [fecha, hora]);
 
         if (parseInt(checkResult.rows[0].count) > 0) {
