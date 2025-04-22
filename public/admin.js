@@ -21,17 +21,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch("/api/admin/reserva");
     const reservas = await res.json();
 
-    const ultimoID = localStorage.getItem("ultimoID");
-    const nuevoID = reservas[0]?.id;
+// 🔔 Detectar si hay una reserva nueva real
+const idsPrevios = JSON.parse(localStorage.getItem("idsReservas") || "[]");
+const idsActuales = reservas.map(r => r.id);
 
-    if (nuevoID && nuevoID !== ultimoID) {
-      if (ultimoID) {
-        document.getElementById("alerta-sonido").play();
-        Swal.fire("📥 Nueva reserva recibida", `ID: ${nuevoID}`, "info");
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-      }
-      localStorage.setItem("ultimoID", nuevoID);
-    }
+// Buscar nuevos IDs que no estaban antes
+const nuevos = idsActuales.filter(id => !idsPrevios.includes(id));
+
+if (nuevos.length > 0) {
+  document.getElementById("alerta-sonido").play();
+  Swal.fire("📥 Nueva reserva recibida", `ID: ${nuevos[0]}`, "info");
+  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+}
+
+// Guardar los nuevos IDs en localStorage
+localStorage.setItem("idsReservas", JSON.stringify(idsActuales));
+
+    
 
     reservasGlobal = reservas;
     mostrarReservasFiltradas();
