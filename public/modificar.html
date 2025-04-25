@@ -149,50 +149,97 @@ async function buscarReservaPorID() {
 
       document.getElementById("buscar").addEventListener("click", buscarReservaPorID);
 
+
+
+
       document.getElementById("form-modificar").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const form = e.target;
+  e.preventDefault();
+  const form = e.target;
 
-        const formData = {
-          id: form.idReserva.value,
-          nombre: form.nombre.value,
-          nacimiento: form.nacimiento.value,
-          telefono: form.telefono.value,
-          correo: form.correo.value,
-          signo: form.signo.value,
-          fecha: form.fecha.value,
-          hora: form.hora.value,
-        };
+  const formData = {
+    id: form.idReserva.value,
+    nombre: form.nombre.value,
+    nacimiento: form.nacimiento.value,
+    telefono: form.telefono.value,
+    correo: form.correo.value,
+    signo: form.signo.value,
+    fecha: form.fecha.value,
+    hora: form.hora.value,
+  };
 
-        const confirmar = await Swal.fire({
-          title: "¿Confirmar cambios?",
-          html: `<p><strong>Fecha nueva:</strong> ${formData.fecha}</p><p><strong>Hora nueva:</strong> ${formData.hora}</p>`,
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonText: "Sí, guardar",
-          cancelButtonText: "Cancelar"
+  const confirmar = await Swal.fire({
+    title: "¿Confirmar cambios?",
+    html: `<p><strong>Fecha nueva:</strong> ${formData.fecha}</p><p><strong>Hora nueva:</strong> ${formData.hora}</p>`,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Sí, guardar",
+    cancelButtonText: "Cancelar"
+  });
+
+  if (!confirmar.isConfirmed) return;
+
+  try {
+    const res = await fetch("/api/admin/reserva", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+
+    // 🔥 Después de modificar, consultar si está confirmada y enviar webhook
+    if (new URLSearchParams(window.location.search).get("admin") === "true") {
+      // Solo si viene de admin (o si quieres siempre hacerlo)
+      const payload = {
+        id: formData.id,
+        nombre: formData.nombre,
+        email: formData.correo,
+        fecha: formData.fecha,
+        hora: formData.hora,
+        estado: "confirmada"
+      };
+
+      console.log("📤 Enviando webhook actualizado:", payload);
+
+      try {
+        const respWebhook = await fetch("https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
         });
 
-        if (!confirmar.isConfirmed) return;
+        const resultWebhook = await respWebhook.text();
+        console.log("✅ Webhook actualizado enviado:", resultWebhook);
+        Swal.fire("📬 Webhook actualizado enviado", "Se notificó al cliente", "success");
+      } catch (err) {
+        console.error("❌ Error enviando webhook actualizado:", err);
+        Swal.fire("❌ Webhook falló", err.message, "error");
+      }
+    }
 
-        try {
-          const res = await fetch("/api/admin/reserva", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-          });
+    await Swal.fire("✅ Modificación exitosa", "Tu cita fue actualizada", "success");
+    form.reset();
+    form.classList.add("oculto");
+    setTimeout(() => window.location.href = "index.html", 1000);
+  } catch (err) {
+    console.error(err);
+    Swal.fire("❌ Error", err.message, "error");
+  }
+});
 
-          if (!res.ok) throw new Error(await res.text());
 
-          await Swal.fire("✅ Modificación exitosa", "Tu cita fue actualizada", "success");
-          form.reset();
-          form.classList.add("oculto");
-          setTimeout(() => window.location.href = "index.html", 1000);
-        } catch (err) {
-          console.error(err);
-          Swal.fire("❌ Error", err.message, "error");
-        }
-      });
+
+
+     
+
+
+
+
+
+
+
+
+
 
       document.getElementById("anular").addEventListener("click", async () => {
         const id = document.getElementById("idReserva").value;

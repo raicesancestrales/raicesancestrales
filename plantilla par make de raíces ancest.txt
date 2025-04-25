@@ -1,3 +1,14 @@
+
+https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw   (wekhook de make raíces ncestrales)
+
+https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw
+
+
+
+
+
+
+
 plantilla par make de raíces ancestrale 
 
 
@@ -8,39 +19,38 @@ plantilla par make de raíces ancestrale
   <title>Confirmación de Cita</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #6a11cb, #11998e); color: #ffffff; text-align: center; padding: 2rem;">
-  <div style="background-color: rgba(255, 255, 255, 0.15); padding: 2rem; border-radius: 1rem; max-width: 600px; margin: auto; box-shadow: 0 0 25px rgba(0,0,0,0.3);">
-    
-    <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;">🌿 Confirmación de Cita - Raíces Ancestrales</h1>
-    <p style="font-size: 1rem; margin-bottom: 1rem;">Gracias por confiar en nosotros. Aquí tienes los detalles de tu cita:</p>
+  
+<div style="background-color: rgba(255, 255, 255, 0.15); padding: 2rem; border-radius: 1rem; backdrop-filter: blur(10px); max-width: 500px; margin: auto; box-shadow: 0 0 25px rgba(0, 0, 0, 0.3); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #fff; text-align: center;">
+  
+  <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;">📅 ¡Tu cita ha sido confirmada!</h1>
+  <p style="font-size: 1rem; margin-bottom: 1.5rem;">Gracias por confiar en nosotros. Aquí están los detalles:</p>
 
-    <p><strong>ID de la cita:</strong> {{3.id}}</p>
-    <p><strong>Nombre:</strong> {{3.nombre}}</p>
-    <p><strong>Correo:</strong> <span style="color: #ffffff;">{{3.email}}</span></p>
-    <p><strong>Fecha:</strong> {{3.fecha}}</p>
-    <p><strong>Hora:</strong> {{3.hora}}</p>
+  <p><strong>ID de la cita:</strong> {{id}}</p>
+  <p><strong>Nombre:</strong> {{nombre}}</p>
+  <p><strong>Correo:</strong> <span style="color: #ffffff;">{{email}}</span></p>
+  <p><strong>Fecha:</strong> {{fecha_legible}}</p>
+  <p><strong>Hora:</strong> {{hora_legible}}</p>
 
-    <div style="margin: 2rem 0;">
-      <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Tienes+una+cita+con+Raices+Ancestrales&dates={{3.hora_inicio}}/{{3.hora_fin}}&details=Tu+cita+ha+sido+confirmada+para+el+día+{{3.fecha}}+a+las+{{3.hora}}.&location=Online&ctz=Europe/Madrid"
-         style="display: inline-block; padding: 1rem 2rem; background-color: #ffffff; color: #11998e; font-weight: bold; border-radius: 1rem; text-decoration: none;">
-         Agendar en Google Calendar
-      </a>
-    </div>
-
-    <p style="margin-bottom: 1rem;"><strong>⚠️ Importante:</strong> Guarda tu <strong>ID de cita</strong>. Lo necesitarás si deseas modificar o cancelar tu reserva.</p>
-
-    <div style="margin: 2rem 0;">
-      <a href="https://raicesancestrales-tb3i.vercel.app/"
-         style="display: inline-block; padding: 1rem 2rem; background-color: #ffffff; color: #11998e; font-weight: bold; border-radius: 1rem; text-decoration: none;">
-         Ir a la app para modificar cita
-      </a>
-    </div>
-
-    <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.3); margin: 2rem 0;">
-
-    <p style="font-size: 0.9rem;">¿Tienes dudas? Visítanos en nuestra página web: 
-      <a href="https://tusitio.com" style="color: #ffffff; text-decoration: underline;">https://tusitio.com</a>
+  <!-- Nuevo Bloque Google Meet -->
+  <div style="margin-top: 2rem; background: rgba(255, 255, 255, 0.2); padding: 1rem; border-radius: 1rem;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Google_Meet_icon_%282020%29.svg" alt="Google Meet" style="width: 40px; height: 40px; margin-bottom: 1rem;">
+    <p style="font-size: 1rem; margin-bottom: 0.5rem;">
+      🛎️ 5 minutos antes de la hora de tu cita recibirás el enlace de <strong>Google Meet</strong> para conectarte.
     </p>
-
+    <p style="font-size: 1rem;">
+      El enlace será enviado por <strong>WhatsApp</strong>. ¡Mantente atento para poder recibir tu guía espiritual! 🌟
+    </p>
   </div>
+
+  <div style="margin-top: 2rem;">
+  <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Tienes+cita+con+Raíces+Ancestrales&dates={{hora_inicio}}/{{hora_fin}}&details=Tienes+una+cita+para+el+día+{{fecha_legible}}+a+las+{{hora_legible}}.+Recuerda+estar+10+minutos+antes.&location=Google+Meet" 
+     style="display: inline-block; padding: 1rem 2rem; background-color: #ffffff; color: #11998e; font-weight: bold; border-radius: 1rem; text-decoration: none;">
+    📅 Agendar en Google Calendar
+  </a>
+</div>
+
+</div>
+
+
 </body>
 </html>
