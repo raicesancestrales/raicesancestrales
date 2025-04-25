@@ -85,6 +85,36 @@ localStorage.setItem("idsReservas", JSON.stringify(idsActuales));
 
       const data = await res.text();
       Swal.fire("✅ Éxito", `Reserva actualizada a "${nuevoEstado}"`, "success");
+     
+      if (nuevoEstado === "confirmada") {
+        const reserva = reservasGlobal.find(r => r.id === id);
+        if (reserva) {
+          try {
+            await fetch("https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                id: reserva.id,
+                nombre: reserva.nombre,
+                email: reserva.correo,
+                fecha: reserva.fecha,
+                hora: reserva.hora,
+                estado: "confirmada"
+              })
+            });
+            console.log("📤 Webhook de confirmación enviado a Make");
+          } catch (err) {
+            console.error("❌ Error al enviar webhook a Make:", err);
+          }
+        }
+      }
+      
+     
+     
+     
+     
+     
+     
       cargarReservas();
     } catch (err) {
       console.error("❌ Error al cambiar estado:", err);
@@ -92,28 +122,10 @@ localStorage.setItem("idsReservas", JSON.stringify(idsActuales));
     }
   };
 
-  if (nuevoEstado === "confirmada") {
-    const reserva = reservasGlobal.find(r => r.id === id);
-    if (reserva) {
-      try {
-        await fetch("https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: reserva.id,
-            nombre: reserva.nombre,
-            email: reserva.correo,
-            fecha: reserva.fecha,
-            hora: reserva.hora,
-            estado: "confirmada"
-          })
-        });
-        console.log("📤 Webhook de confirmación enviado a Make");
-      } catch (err) {
-        console.error("❌ Error al enviar webhook a Make:", err);
-      }
-    }
-  }
+
+
+
+
   
 
 
