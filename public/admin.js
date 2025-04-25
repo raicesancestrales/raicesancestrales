@@ -89,25 +89,34 @@ localStorage.setItem("idsReservas", JSON.stringify(idsActuales));
       if (nuevoEstado === "confirmada") {
         const reserva = reservasGlobal.find(r => r.id === id);
         if (reserva) {
+          const payload = {
+            id: reserva.id,
+            nombre: reserva.nombre,
+            email: reserva.correo, // revisa si es "correo" o "email"
+            fecha: reserva.fecha,
+            hora: reserva.hora,
+            estado: "confirmada"
+          };
+      
+          console.log("📤 Enviando webhook con payload:", payload);
+      
           try {
-            await fetch("https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw", {
+            const response = await fetch("https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                id: reserva.id,
-                nombre: reserva.nombre,
-                email: reserva.correo,
-                fecha: reserva.fecha,
-                hora: reserva.hora,
-                estado: "confirmada"
-              })
+              body: JSON.stringify(payload)
             });
-            console.log("📤 Webhook de confirmación enviado a Make");
+      
+            const result = await response.text();
+            console.log("✅ Respuesta del webhook:", result);
           } catch (err) {
             console.error("❌ Error al enviar webhook a Make:", err);
           }
         }
       }
+      
+
+      
       
      
      
