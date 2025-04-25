@@ -86,32 +86,36 @@ localStorage.setItem("idsReservas", JSON.stringify(idsActuales));
       const data = await res.text();
       Swal.fire("✅ Éxito", `Reserva actualizada a "${nuevoEstado}"`, "success");
      
-      if (nuevoEstado === "confirmada") {
-        const reserva = reservasGlobal.find(r => r.id === id);
-        if (reserva) {
-          const payload = {
-            id: reserva.id,
-            nombre: reserva.nombre,
-            email: reserva.correo, // revisa si es "correo" o "email"
-            fecha: reserva.fecha,
-            hora: reserva.hora,
-            estado: "confirmada"
-          };
+
+
+
+      if (nuevoEstado === "confirmada" && reserva) {
+        Swal.fire("🚀 Enviando webhook...", reserva.id, "info");
       
-          console.log("📤 Enviando webhook con payload:", payload);
+        const payload = {
+          id: reserva.id,
+          nombre: reserva.nombre,
+          email: reserva.correo, // asegúrate de que es .correo
+          fecha: reserva.fecha,
+          hora: reserva.hora,
+          estado: "confirmada"
+        };
       
-          try {
-            const response = await fetch("https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-            });
+        console.log("📤 Enviando webhook con:", payload);
       
-            const result = await response.text();
-            console.log("✅ Respuesta del webhook:", result);
-          } catch (err) {
-            console.error("❌ Error al enviar webhook a Make:", err);
-          }
+        try {
+          const resp = await fetch("https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+      
+          const result = await resp.text();
+          console.log("✅ Webhook enviado con respuesta:", result);
+          Swal.fire("✅ Webhook enviado", result, "success");
+        } catch (err) {
+          console.error("❌ Error al enviar webhook a Make:", err);
+          Swal.fire("❌ Error webhook", err.message, "error");
         }
       }
       
