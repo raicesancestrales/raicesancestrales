@@ -76,65 +76,56 @@ localStorage.setItem("idsReservas", JSON.stringify(idsActuales));
   filtroEstado.addEventListener("change", mostrarReservasFiltradas);
 
   window.cambiarEstado = async (id, nuevoEstado) => {
+    // 🧠 Obtener la reserva antes de modificar nada
+    const reserva = reservasGlobal.find(r => r.id === id);
+  
     try {
       const res = await fetch("/api/admin/reserva", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, estado: nuevoEstado })
       });
-
+  
       const data = await res.text();
       Swal.fire("✅ Éxito", `Reserva actualizada a "${nuevoEstado}"`, "success");
-     
-
-
-
-      if (nuevoEstado === "confirmada" && reserva) {
-        Swal.fire("🚀 Enviando webhook...", reserva.id, "info");
-      
+  
+      // ✅ Enviar webhook si se confirma
+      if (nuevoEstado.toLowerCase() === "confirmada" && reserva) {
         const payload = {
           id: reserva.id,
           nombre: reserva.nombre,
-          email: reserva.correo, // asegúrate de que es .correo
+          email: reserva.correo || reserva.email, // asegúrate que exista
           fecha: reserva.fecha,
           hora: reserva.hora,
           estado: "confirmada"
         };
-      
+  
         console.log("📤 Enviando webhook con:", payload);
-      
+        Swal.fire("🚀 Webhook activo", `Cita ${reserva.id}`, "info");
+  
         try {
           const resp = await fetch("https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
-      
+  
           const result = await resp.text();
           console.log("✅ Webhook enviado con respuesta:", result);
-          Swal.fire("✅ Webhook enviado", result, "success");
+          Swal.fire("📬 Webhook enviado", "Cita confirmada", "success");
         } catch (err) {
-          console.error("❌ Error al enviar webhook a Make:", err);
-          Swal.fire("❌ Error webhook", err.message, "error");
+          console.error("❌ Error al enviar webhook:", err);
+          Swal.fire("❌ Webhook falló", err.message, "error");
         }
       }
-      
-
-      
-      
-     
-     
-     
-     
-     
-     
-      cargarReservas();
+  
+      cargarReservas(); // actualizar tabla
     } catch (err) {
-      console.error("❌ Error al cambiar estado:", err);
+      console.error("❌ Error en cambiarEstado:", err);
       Swal.fire("❌ Error", "No se pudo cambiar el estado", "error");
     }
   };
-
+  
 
 
 
