@@ -92,6 +92,41 @@ localStorage.setItem("idsReservas", JSON.stringify(idsActuales));
     }
   };
 
+  if (nuevoEstado === "confirmada") {
+    const reserva = reservasGlobal.find(r => r.id === id);
+    if (reserva) {
+      try {
+        await fetch("https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: reserva.id,
+            nombre: reserva.nombre,
+            email: reserva.correo,
+            fecha: reserva.fecha,
+            hora: reserva.hora,
+            estado: "confirmada"
+          })
+        });
+        console.log("📤 Webhook de confirmación enviado a Make");
+      } catch (err) {
+        console.error("❌ Error al enviar webhook a Make:", err);
+      }
+    }
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
   window.eliminarReserva = async (id) => {
     const confirmar = confirm("¿Seguro que deseas eliminar esta reserva?");
     if (!confirmar) return;
