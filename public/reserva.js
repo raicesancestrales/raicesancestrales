@@ -181,21 +181,27 @@ document.getElementById("fecha").addEventListener("change", async function () {
     console.error("❌ Error al cargar reservas:", error);
   }
 
+
+
+
+  
   horariosDisponibles.forEach(hora => {
     const btn = document.createElement("button");
     btn.classList.add("horario-btn");
     btn.setAttribute("type", "button");
     btn.textContent = hora;
-
-    const horaFecha = new Date(fechaSeleccionada);
+  
+    const fechaSeleccionadaValor = document.getElementById("fecha").value;
     const [horaStr, minutoStr] = hora.split(":");
-    horaFecha.setHours(parseInt(horaStr));
-    horaFecha.setMinutes(parseInt(minutoStr));
-    horaFecha.setSeconds(0);
-
-    if (fechaSeleccionada.toDateString() < ahora.toDateString() ||
-        (fechaSeleccionada.toDateString() === ahora.toDateString() && horaFecha.getTime() < ahora.getTime()) ||
-        ocupadas.includes(hora)
+  
+    // Crear un objeto Date completo para la hora del horario
+    const fechaHoraHorario = new Date(`${fechaSeleccionadaValor}T${horaStr.padStart(2, '0')}:${minutoStr.padStart(2, '0')}:00`);
+  
+    const ahora = new Date(); // 🛠 recalcular la hora real cada vez
+  
+    if (
+      fechaHoraHorario < ahora || // Si la hora+fecha del horario es anterior a ahora
+      ocupadas.includes(hora)
     ) {
       btn.classList.add("disabled");
       btn.disabled = true;
@@ -206,7 +212,8 @@ document.getElementById("fecha").addEventListener("change", async function () {
         contenedor.classList.add("oculto");
       };
     }
-
+  
     horariosDiv.appendChild(btn);
   });
+  
 });
