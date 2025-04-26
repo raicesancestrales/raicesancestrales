@@ -183,43 +183,38 @@ document.getElementById("fecha").addEventListener("change", async function () {
 
 
 
-  horariosDisponibles.forEach(horaTexto => {
+  horariosDisponibles.forEach(hora => {
     const btn = document.createElement("button");
     btn.classList.add("horario-btn");
     btn.setAttribute("type", "button");
-    btn.textContent = horaTexto;
+    btn.textContent = hora;
   
-    const fechaSeleccionadaValor = document.getElementById("fecha").value;
     const ahora = new Date();
+    const fechaSeleccionadaValor = document.getElementById("fecha").value;
   
-    // Armar fecha completa
-    const [horaSimple, ampm] = horaTexto.split(' ');
-    let [h, m] = horaSimple.split(':').map(Number);
+    const [horaStr, minutoStr] = hora.split(":");
   
-    if (ampm?.toLowerCase().includes('p.m.') && h < 12) h += 12;
-    if (ampm?.toLowerCase().includes('a.m.') && h === 12) h = 0;
-  
+    // Crear objeto fecha y hora del horario
     const fechaHoraHorario = new Date(fechaSeleccionadaValor);
-    fechaHoraHorario.setHours(h);
-    fechaHoraHorario.setMinutes(m);
+    fechaHoraHorario.setHours(parseInt(horaStr));
+    fechaHoraHorario.setMinutes(parseInt(minutoStr));
     fechaHoraHorario.setSeconds(0);
   
-    if (
-      fechaHoraHorario < ahora ||
-      ocupadas.includes(horaTexto)
-    ) {
+    // Comparar horario completo contra ahora
+    if (fechaHoraHorario.getTime() <= ahora.getTime() || ocupadas.includes(hora)) {
       btn.classList.add("disabled");
       btn.disabled = true;
       btn.textContent += " ⛔";
     } else {
       btn.onclick = () => {
-        document.getElementById("hora").value = horaTexto;
+        document.getElementById("hora").value = hora;
         contenedor.classList.add("oculto");
       };
     }
   
     horariosDiv.appendChild(btn);
   });
+  
   
   
 
