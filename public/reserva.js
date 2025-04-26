@@ -151,9 +151,6 @@ document.getElementById("fecha").addEventListener("change", async function () {
 
   if (!fechaSeleccionadaValor) return;
 
-  const fechaSeleccionada = new Date(fechaSeleccionadaValor);
-  const ahora = new Date();  // 👈 recalculamos justo aquí, para que esté actualizada la hora real
-  
   horariosDiv.innerHTML = "";
   contenedor.classList.remove("oculto");
 
@@ -181,25 +178,26 @@ document.getElementById("fecha").addEventListener("change", async function () {
     console.error("❌ Error al cargar reservas:", error);
   }
 
+  const ahora = new Date(); // Hora actual al momento real
+
+  const [año, mes, dia] = fechaSeleccionadaValor.split("-").map(Number);
 
   horariosDisponibles.forEach(hora => {
     const btn = document.createElement("button");
     btn.classList.add("horario-btn");
     btn.setAttribute("type", "button");
     btn.textContent = hora;
-  
-    const ahora = new Date(); // ahora real
-  
-    const fechaSeleccionadaValor = document.getElementById("fecha").value; // "2025-04-26"
-    const [año, mes, dia] = fechaSeleccionadaValor.split("-").map(Number); // Año, Mes, Día
-  
-    const [horaStr, minutoStr] = hora.split(":"); // ejemplo "10:00" ➔ ["10", "00"]
-  
-    // Crear la fecha completa del horario
-    const fechaHoraHorario = new Date(año, mes - 1, dia, parseInt(horaStr), parseInt(minutoStr), 0); 
-  
-    // Comparación real de timestamp
-    if (fechaHoraHorario.getTime() <= ahora.getTime() || ocupadas.includes(hora)) {
+
+    const [horaStr, minutoStr] = hora.split(":");
+    const fechaHoraHorario = new Date(año, mes - 1, dia, parseInt(horaStr), parseInt(minutoStr), 0);
+
+    // 📣 Comparar solo si es hoy
+    let esHoy = ahora.getFullYear() === año && (ahora.getMonth() + 1) === mes && ahora.getDate() === dia;
+
+    if (
+      (esHoy && fechaHoraHorario <= ahora) || // Si es hoy y ya pasó
+      ocupadas.includes(hora) // o si está ocupada
+    ) {
       btn.classList.add("disabled");
       btn.disabled = true;
       btn.textContent += " ⛔";
@@ -209,9 +207,11 @@ document.getElementById("fecha").addEventListener("change", async function () {
         contenedor.classList.add("oculto");
       };
     }
-  
+
     horariosDiv.appendChild(btn);
   });
+});
+
   
   
   
