@@ -219,4 +219,3 @@ document.getElementById("fecha").addEventListener("change", async function () {
   
 
   
-});
