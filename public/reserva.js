@@ -188,15 +188,17 @@ document.getElementById("fecha").addEventListener("change", async function () {
     btn.setAttribute("type", "button");
     btn.textContent = hora;
   
-    const fechaSeleccionadaValor = document.getElementById("fecha").value;
-    const [horaStr, minutoStr] = hora.split(":");
+    const ahora = new Date(); // ahora real
   
-    // Crear fecha completa del horario en local
-    const [year, month, day] = fechaSeleccionadaValor.split("-").map(Number);
-    const fechaHoraHorario = new Date(year, month - 1, day, parseInt(horaStr), parseInt(minutoStr), 0);
+    const fechaSeleccionadaValor = document.getElementById("fecha").value; // "2025-04-26"
+    const [año, mes, dia] = fechaSeleccionadaValor.split("-").map(Number); // Año, Mes, Día
   
-    const ahora = new Date(); // Ahora real en local
+    const [horaStr, minutoStr] = hora.split(":"); // ejemplo "10:00" ➔ ["10", "00"]
   
+    // Crear la fecha completa del horario
+    const fechaHoraHorario = new Date(año, mes - 1, dia, parseInt(horaStr), parseInt(minutoStr), 0); 
+  
+    // Comparación real de timestamp
     if (fechaHoraHorario.getTime() <= ahora.getTime() || ocupadas.includes(hora)) {
       btn.classList.add("disabled");
       btn.disabled = true;
