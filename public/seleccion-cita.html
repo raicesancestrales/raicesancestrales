@@ -79,45 +79,62 @@
         console.error("❌ Error al cargar reservas confirmadas:", error);
       }
 
+
+
+
+
+
       horariosDisponibles.forEach(hora => {
-        const btn = document.createElement("button");
-        btn.classList.add("horario-btn");
+  const btn = document.createElement("button");
+  btn.classList.add("horario-btn");
 
-        const [h, m] = hora.split(":");
+  const [h, m] = hora.split(":");
 
-        const fechaEspaña = DateTime.fromObject(
-          {
-            year: Number(fechaSeleccionada.split("-")[0]),
-            month: Number(fechaSeleccionada.split("-")[1]),
-            day: Number(fechaSeleccionada.split("-")[2]),
-            hour: Number(h),
-            minute: Number(m)
-          },
-          { zone: "Europe/Madrid" }
-        );
+  const fechaSeleccionadaDate = new Date(fechaSeleccionada + "T" + h.padStart(2, '0') + ":" + m.padStart(2, '0'));
+  const ahora = new Date();
 
-        const fechaUsuario = fechaEspaña.setZone(zonaUsuario);
+  const fechaEspaña = DateTime.fromObject(
+    {
+      year: Number(fechaSeleccionada.split("-")[0]),
+      month: Number(fechaSeleccionada.split("-")[1]),
+      day: Number(fechaSeleccionada.split("-")[2]),
+      hour: Number(h),
+      minute: Number(m)
+    },
+    { zone: "Europe/Madrid" }
+  );
 
-        const horaEspaña = fechaEspaña.toFormat("HH:mm");
-        const horaLocal = fechaUsuario.toFormat("HH:mm");
+  const fechaUsuario = fechaEspaña.setZone(zonaUsuario);
 
-        btn.textContent = `${horaEspaña} (España) / ${horaLocal} (Tu hora)`;
+  const horaEspaña = fechaEspaña.toFormat("HH:mm");
+  const horaLocal = fechaUsuario.toFormat("HH:mm");
 
-        if (ocupadas.includes(hora)) {
-          btn.classList.add("disabled");
-          btn.disabled = true;
-          btn.textContent += " ⛔ Reservado";
-        } else {
-          btn.onclick = () => {
-            const url = new URL("reserva.html", window.location.origin);
-            url.searchParams.set("fecha", fechaSeleccionada);
-            url.searchParams.set("hora", hora);
-            window.location.href = url;
-          };
-        }
+  btn.textContent = `${horaEspaña} (España) / ${horaLocal} (Tu hora)`;
 
-        horariosDiv.appendChild(btn);
-      });
+  if (
+    ocupadas.includes(hora) ||
+    (fechaSeleccionada === hoy && fechaSeleccionadaDate < ahora) // 🔥 Aquí bloqueo las horas pasadas
+  ) {
+    btn.classList.add("disabled");
+    btn.disabled = true;
+    btn.textContent += " ⛔";
+  } else {
+    btn.onclick = () => {
+      const url = new URL("reserva.html", window.location.origin);
+      url.searchParams.set("fecha", fechaSeleccionada);
+      url.searchParams.set("hora", hora);
+      window.location.href = url;
+    };
+  }
+
+  horariosDiv.appendChild(btn);
+});
+
+
+
+
+
+
     });
   </script>
 </body>

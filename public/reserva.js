@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
  
-  // 🔥 Bloquear fechas pasadas en el input de fecha
-  const fechaInput = document.getElementById("fecha");
-  const hoy = new Date().toISOString().split("T")[0];
-  fechaInput.setAttribute("min", hoy);
+  
   
   const paisSelect = document.getElementById("pais");
   const metodoPeru = document.getElementById("metodo-pago-peru");
@@ -16,7 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const confirmar = document.querySelector(".modal .confirmar");
   const cancelar = document.querySelector(".cancelar");
   const inputComprobante = document.getElementById("comprobante");
-  const btnConfirmar = document.querySelector("button.confirmar[type='submit']");
+  const btnConfirmar = document.querySelector("#form-reserva button.confirmar");
+
   const checkTerminos = document.getElementById("terminos");
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -143,74 +141,7 @@ function generarID() {
   return `RA-${timestamp}-${random}`.toUpperCase();
 }
 
-// 💥 CÓDIGO DE BLOQUEO DE HORARIOS ACTUALIZADO
-document.getElementById("fecha").addEventListener("change", async function () {
-  const fechaSeleccionadaValor = this.value;
-  const horariosDiv = document.getElementById("horarios-nuevos");
-  const contenedor = document.getElementById("seleccion-horario");
 
-  if (!fechaSeleccionadaValor) return;
-
-  horariosDiv.innerHTML = "";
-  contenedor.classList.remove("oculto");
-
-  const horariosDisponibles = [
-    "10:00", "10:45", "11:30", "12:15", "13:00",
-    "17:00", "17:45", "18:30", "19:15", "20:00", "20:45", "21:30"
-  ];
-
-  let ocupadas = [];
-
-  try {
-    const res = await fetch("/api/admin/reserva");
-    const data = await res.json();
-
-    ocupadas = data
-      .filter(r => {
-        const fechaBD = new Date(r.fecha).toISOString().split("T")[0];
-        return (
-          fechaBD === fechaSeleccionadaValor &&
-          r.estado.trim().toLowerCase() !== "cancelada"
-        );
-      })
-      .map(r => r.hora?.substring(0, 5));
-  } catch (error) {
-    console.error("❌ Error al cargar reservas:", error);
-  }
-
-  const ahora = new Date(); // Hora actual al momento real
-
-  const [año, mes, dia] = fechaSeleccionadaValor.split("-").map(Number);
-
-  horariosDisponibles.forEach(hora => {
-    const btn = document.createElement("button");
-    btn.classList.add("horario-btn");
-    btn.setAttribute("type", "button");
-    btn.textContent = hora;
-
-    const [horaStr, minutoStr] = hora.split(":");
-    const fechaHoraHorario = new Date(año, mes - 1, dia, parseInt(horaStr), parseInt(minutoStr), 0);
-
-    // 📣 Comparar solo si es hoy
-    let esHoy = ahora.getFullYear() === año && (ahora.getMonth() + 1) === mes && ahora.getDate() === dia;
-
-    if (
-      (esHoy && fechaHoraHorario <= ahora) || // Si es hoy y ya pasó
-      ocupadas.includes(hora) // o si está ocupada
-    ) {
-      btn.classList.add("disabled");
-      btn.disabled = true;
-      btn.textContent += " ⛔";
-    } else {
-      btn.onclick = () => {
-        document.getElementById("hora").value = hora;
-        contenedor.classList.add("oculto");
-      };
-    }
-
-    horariosDiv.appendChild(btn);
-  });
-});
 
   
   
