@@ -1,4 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
+ 
+ // 🔥 Bloquear fechas pasadas en el input de fecha
+ const fechaInput = document.getElementById("fecha");
+ const hoy = new Date().toISOString().split("T")[0];
+ fechaInput.setAttribute("min", hoy);
+ 
+ 
+ 
   const paisSelect = document.getElementById("pais");
   const metodoPeru = document.getElementById("metodo-pago-peru");
   const metodoEspana = document.getElementById("metodo-pago-espana");
@@ -142,3 +150,71 @@ document.addEventListener("DOMContentLoaded", function () {
     return `RA-${timestamp}-${random}`.toUpperCase();
   }
 
+  document.getElementById("fecha").addEventListener("change", async function () {
+    const fechaSeleccionadaValor = this.value;
+    const ahora = new Date();
+    const horariosDiv = document.getElementById("horarios-nuevos");
+    const contenedor = document.getElementById("seleccion-horario");
+  
+    if (!fechaSeleccionadaValor) return;
+  
+    const fechaSeleccionada = new Date(fechaSeleccionadaValor);
+    horariosDiv.innerHTML = "";
+    contenedor.classList.remove("oculto");
+  
+    const horariosDisponibles = [
+      "10:00", "10:45", "11:30", "12:15", "13:00",
+      "17:00", "17:45", "18:30", "19:15", "20:00", "20:45", "21:30"
+    ];
+  
+    let ocupadas = [];
+  
+    try {
+      const res = await fetch("/api/admin/reserva");
+      const data = await res.json();
+  
+      ocupadas = data
+        .filter(r => {
+          const fechaBD = new Date(r.fecha).toISOString().split("T")[0];
+          return (
+            fechaBD === fechaSeleccionadaValor &&
+            r.estado.trim().toLowerCase() !== "cancelada"
+          );
+        })
+        .map(r => r.hora?.substring(0, 5));
+    } catch (error) {
+      console.error("❌ Error al cargar reservas:", error);
+    }
+  
+    horariosDisponibles.forEach(hora => {
+      const btn = document.createElement("button");
+      btn.classList.add("horario-btn");
+      btn.setAttribute("type", "button");
+      btn.textContent = hora;
+  
+      // Convertir hora a objeto fecha para comparar
+      const horaFecha = new Date(fechaSeleccionada);
+      const [horaStr, minutoStr] = hora.split(":");
+      horaFecha.setHours(parseInt(horaStr));
+      horaFecha.setMinutes(parseInt(minutoStr));
+      horaFecha.setSeconds(0);
+  
+      // Validar si la fecha es anterior o si la hora ya pasó
+      if (fechaSeleccionada.toDateString() < ahora.toDateString() ||   // Fecha anterior
+          (fechaSeleccionada.toDateString() === ahora.toDateString() && horaFecha < ahora) || // Hora pasada hoy
+          ocupadas.includes(hora)  // Horario ocupado
+      ) {
+        btn.classList.add("disabled");
+        btn.disabled = true;
+        btn.textContent += " ⛔";
+      } else {
+        btn.onclick = () => {
+          document.getElementById("hora").value = hora;
+          contenedor.classList.add("oculto");
+        };
+      }
+  
+      horariosDiv.appendChild(btn);
+    });
+  });
+  
