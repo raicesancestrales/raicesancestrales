@@ -182,25 +182,21 @@ document.getElementById("fecha").addEventListener("change", async function () {
   }
 
 
-
   horariosDisponibles.forEach(hora => {
     const btn = document.createElement("button");
     btn.classList.add("horario-btn");
     btn.setAttribute("type", "button");
     btn.textContent = hora;
   
-    const ahora = new Date();
     const fechaSeleccionadaValor = document.getElementById("fecha").value;
-  
     const [horaStr, minutoStr] = hora.split(":");
   
-    // Crear objeto fecha y hora del horario
-    const fechaHoraHorario = new Date(fechaSeleccionadaValor);
-    fechaHoraHorario.setHours(parseInt(horaStr));
-    fechaHoraHorario.setMinutes(parseInt(minutoStr));
-    fechaHoraHorario.setSeconds(0);
+    // Crear fecha completa del horario en local
+    const [year, month, day] = fechaSeleccionadaValor.split("-").map(Number);
+    const fechaHoraHorario = new Date(year, month - 1, day, parseInt(horaStr), parseInt(minutoStr), 0);
   
-    // Comparar horario completo contra ahora
+    const ahora = new Date(); // Ahora real en local
+  
     if (fechaHoraHorario.getTime() <= ahora.getTime() || ocupadas.includes(hora)) {
       btn.classList.add("disabled");
       btn.disabled = true;
@@ -214,6 +210,8 @@ document.getElementById("fecha").addEventListener("change", async function () {
   
     horariosDiv.appendChild(btn);
   });
+  
+  
   
   
   
