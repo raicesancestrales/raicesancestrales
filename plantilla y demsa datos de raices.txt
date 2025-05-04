@@ -1,0 +1,68 @@
+https://raicesancestrales-tb3i.vercel.app/         (nombre de la app link)
+
+https://raicesancestrales-tb3i.vercel.app/admin.html  (la parte de admin de la app para que confirme la cita o haga cambios)
+
+URL DE LA BASE DE DATOS
+postgres://u4u27t3sjl3r77:p37040f7a7da06774c5be95a28b1ef3771f133b7ec5f1a4af466b45ed69a55bc0@cc0gj7hsrh0ht8.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d7co17lg06higg
+
+
+
+
+https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw   (wekhook de make raíces ncestrales)
+
+https://hook.eu2.make.com/5wjj2jh5ikx5ugjvgj18sxkz1zuduyxw
+
+
+
+
+
+
+
+plantilla par make de raíces ancestrale 
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmación de Cita</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #6a11cb, #11998e); color: #ffffff; text-align: center; padding: 2rem;">
+
+<div style="background-color: rgba(255, 255, 255, 0.15); padding: 2rem; border-radius: 1rem; backdrop-filter: blur(10px); max-width: 600px; margin: auto; box-shadow: 0 0 25px rgba(0, 0, 0, 0.3); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #fff; text-align: center;">
+  
+  <h1 style="font-size: 2rem; margin-bottom: 1rem;">📅 ¡Tu cita ha sido confirmada!</h1>
+  
+  <p style="font-size: 1.2rem;">Hola <strong>{{13.`1`}}</strong>,</p>
+  
+  <p>Gracias por confiar en nosotros. Aquí están los detalles de tu cita:</p>
+
+  <ul style="list-style: none; padding: 0; text-align: left; margin: 1rem auto; max-width: 400px;">
+    <li><strong>ID de la cita:</strong> {{13.`0`}}</li>
+    <li><strong>Nombre:</strong> {{13.`1`}}</li>
+    <li><strong>Correo:</strong> {{13.`2`}}</li>
+    <li><strong>Fecha:</strong>{{18.`3`}}</li>
+    <li><strong>Hora:</strong> {{13.`4`}}</li>
+  </ul>
+
+  <p style="margin-top: 2rem;">🛎️ <strong>Importante:</strong> 10 minutos antes de tu cita te enviaremos un mensaje a tu WhatsApp con el enlace de Google Meet para conectarte con tu guía espiritual. 🌟</p>
+
+  <p style="margin: 1rem 0;">¡No olvides estar puntual para aprovechar al máximo tu sesión! 🙌</p>
+
+  <div style="margin: 2rem 0; text-align: center;">
+  <a href="https://calendar.google.com/calendar/render?action=TEMPLATE
+&text=Tienes+cita+con+Raíces+Ancestrales
+&dates={{formatDate(parseDate(18.`7`; "DD/MM/YYYY HH:mm:ss"); "YYYYMMDDTHHmmssZ")}}/{{formatDate(parseDate(18.`8`; "DD/MM/YYYY HH:mm:ss"); "YYYYMMDDTHHmmssZ")}}
+&details=Hola+{{13.`1`}}%0ATienes+una+cita+el+{{formatDate(parseDate(18.`7`; "DD/MM/YYYY HH:mm:ss"); "DD/MM/YYYY")}}+a+las+{{13.`4`}}.+Recuerda+estar+10+minutos+antes.+Muchas+gracias+por+confiar+en+nosotros+🙏
+&location=Google+Meet"
+    style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%); color: white; font-weight: bold; border-radius: 2rem; text-decoration: none; font-size: 1.2rem;">
+      📅 Agendar en Google Calendar
+</a>
+ 
+
+  <p style="margin-top: 2rem;">Con cariño,<br><strong>Equipo de Raíces Ancestrales</strong> 🌱</p>
+
+</div>
+
+</body>
+</html>
